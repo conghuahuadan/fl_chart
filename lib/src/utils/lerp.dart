@@ -37,21 +37,6 @@ List<FlSpot>? lerpFlSpotList(List<FlSpot>? a, List<FlSpot>? b, double t) =>
     lerpList(a, b, t, lerp: FlSpot.lerp);
 
 
-/// Lerps [HorizontalRangeAnnotation] list based on [t] value, check [Tween.lerp].
-List<HorizontalRangeAnnotation>? lerpHorizontalRangeAnnotationList(
-  List<HorizontalRangeAnnotation>? a,
-  List<HorizontalRangeAnnotation>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: HorizontalRangeAnnotation.lerp);
-
-/// Lerps [VerticalRangeAnnotation] list based on [t] value, check [Tween.lerp].
-List<VerticalRangeAnnotation>? lerpVerticalRangeAnnotationList(
-  List<VerticalRangeAnnotation>? a,
-  List<VerticalRangeAnnotation>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: VerticalRangeAnnotation.lerp);
 
 /// Lerps [LineChartBarData] list based on [t] value, check [Tween.lerp].
 List<LineChartBarData>? lerpLineChartBarDataList(

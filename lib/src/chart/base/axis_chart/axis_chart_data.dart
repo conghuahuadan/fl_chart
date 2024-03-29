@@ -15,7 +15,6 @@ import 'package:flutter/material.dart' hide Image;
 /// each child have to set it in their constructor.
 abstract class AxisChartData extends BaseChartData with EquatableMixin {
   AxisChartData({
-    RangeAnnotations? rangeAnnotations,
     required this.minX,
     required this.maxX,
     double? baselineX,
@@ -26,12 +25,10 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
     Color? backgroundColor,
     super.borderData,
   })  :
-        rangeAnnotations = rangeAnnotations ?? const RangeAnnotations(),
         baselineX = baselineX ?? 0,
         baselineY = baselineY ?? 0,
         clipData = clipData ?? const FlClipData.none(),
         backgroundColor = backgroundColor ?? Colors.transparent;
-  final RangeAnnotations rangeAnnotations;
 
   double minX;
   double maxX;
@@ -55,7 +52,6 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
   /// Used for equality check, see [EquatableMixin].
   @override
   List<Object?> get props => [
-        rangeAnnotations,
         minX,
         maxX,
         baselineX,
@@ -203,198 +199,5 @@ class FlLine with EquatableMixin {
       ];
 }
 
-/// Holds data for rendering horizontal and vertical range annotations.
-class RangeAnnotations with EquatableMixin {
-  /// Axis based charts can annotate some horizontal and vertical regions,
-  /// using [horizontalRangeAnnotations], and [verticalRangeAnnotations] respectively.
-  const RangeAnnotations({
-    this.horizontalRangeAnnotations = const [],
-    this.verticalRangeAnnotations = const [],
-  });
-
-  final List<HorizontalRangeAnnotation> horizontalRangeAnnotations;
-  final List<VerticalRangeAnnotation> verticalRangeAnnotations;
-
-  /// Lerps a [RangeAnnotations] based on [t] value, check [Tween.lerp].
-  static RangeAnnotations lerp(
-    RangeAnnotations a,
-    RangeAnnotations b,
-    double t,
-  ) {
-    return RangeAnnotations(
-      horizontalRangeAnnotations: lerpHorizontalRangeAnnotationList(
-        a.horizontalRangeAnnotations,
-        b.horizontalRangeAnnotations,
-        t,
-      )!,
-      verticalRangeAnnotations: lerpVerticalRangeAnnotationList(
-        a.verticalRangeAnnotations,
-        b.verticalRangeAnnotations,
-        t,
-      )!,
-    );
-  }
-
-  /// Copies current [RangeAnnotations] to a new [RangeAnnotations],
-  /// and replaces provided values.
-  RangeAnnotations copyWith({
-    List<HorizontalRangeAnnotation>? horizontalRangeAnnotations,
-    List<VerticalRangeAnnotation>? verticalRangeAnnotations,
-  }) {
-    return RangeAnnotations(
-      horizontalRangeAnnotations:
-          horizontalRangeAnnotations ?? this.horizontalRangeAnnotations,
-      verticalRangeAnnotations:
-          verticalRangeAnnotations ?? this.verticalRangeAnnotations,
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        horizontalRangeAnnotations,
-        verticalRangeAnnotations,
-      ];
-}
-
-/// Defines an annotation region in y (vertical) axis.
-class HorizontalRangeAnnotation with EquatableMixin {
-  /// Annotates a horizontal region from most left to most right point of the chart, and
-  /// from [y1] to [y2], and fills the area with [color] or [gradient].
-  HorizontalRangeAnnotation({
-    required this.y1,
-    required this.y2,
-    Color? color,
-    this.gradient,
-  }) : color = color ??
-            ((color == null && gradient == null) ? Colors.white : null);
-
-  /// Determines starting point in vertical (y) axis.
-  final double y1;
-
-  /// Determines ending point in vertical (y) axis.
-  final double y2;
-
-  /// If provided, this [HorizontalRangeAnnotation] draws with this [color]
-  /// Otherwise we use [gradient] to draw the background.
-  /// It draws with [gradient] if you provide both [color] and [gradient].
-  /// If none is provided, it draws with a white color.
-  final Color? color;
-
-  /// If provided, this [HorizontalRangeAnnotation] draws with this [gradient]
-  /// Otherwise we use [color] to draw the background.
-  /// It draws with [gradient] if you provide both [color] and [gradient].
-  /// If none is provided, it draws with a white color.
-  final Gradient? gradient;
-
-  /// Lerps a [HorizontalRangeAnnotation] based on [t] value, check [Tween.lerp].
-  static HorizontalRangeAnnotation lerp(
-    HorizontalRangeAnnotation a,
-    HorizontalRangeAnnotation b,
-    double t,
-  ) {
-    return HorizontalRangeAnnotation(
-      y1: lerpDouble(a.y1, b.y1, t)!,
-      y2: lerpDouble(a.y2, b.y2, t)!,
-      color: Color.lerp(a.color, b.color, t),
-      gradient: Gradient.lerp(a.gradient, b.gradient, t),
-    );
-  }
-
-  /// Copies current [HorizontalRangeAnnotation] to a new [HorizontalRangeAnnotation],
-  /// and replaces provided values.
-  HorizontalRangeAnnotation copyWith({
-    double? y1,
-    double? y2,
-    Color? color,
-    Gradient? gradient,
-  }) {
-    return HorizontalRangeAnnotation(
-      y1: y1 ?? this.y1,
-      y2: y2 ?? this.y2,
-      color: color ?? this.color,
-      gradient: gradient ?? this.gradient,
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        y1,
-        y2,
-        color,
-        gradient,
-      ];
-}
-
-/// Defines an annotation region in x (horizontal) axis.
-class VerticalRangeAnnotation with EquatableMixin {
-  /// Annotates a vertical region from most bottom to most top point of the chart, and
-  /// from [x1] to [x2], and fills the area with [color] or [gradient].
-  VerticalRangeAnnotation({
-    required this.x1,
-    required this.x2,
-    Color? color,
-    this.gradient,
-  }) : color = color ??
-            ((color == null && gradient == null) ? Colors.white : null);
-
-  /// Determines starting point in horizontal (x) axis.
-  final double x1;
-
-  /// Determines ending point in horizontal (x) axis.
-  final double x2;
-
-  /// If provided, this [VerticalRangeAnnotation] draws with this [color]
-  /// Otherwise we use [gradient] to draw the background.
-  /// It draws with [gradient] if you provide both [color] and [gradient].
-  /// If none is provided, it draws with a white color.
-  final Color? color;
-
-  /// If provided, this [VerticalRangeAnnotation] draws with this [gradient]
-  /// Otherwise we use [color] to draw the background.
-  /// It draws with [gradient] if you provide both [color] and [gradient].
-  /// If none is provided, it draws with a white color.
-  final Gradient? gradient;
-
-  /// Lerps a [VerticalRangeAnnotation] based on [t] value, check [Tween.lerp].
-  static VerticalRangeAnnotation lerp(
-    VerticalRangeAnnotation a,
-    VerticalRangeAnnotation b,
-    double t,
-  ) {
-    return VerticalRangeAnnotation(
-      x1: lerpDouble(a.x1, b.x1, t)!,
-      x2: lerpDouble(a.x2, b.x2, t)!,
-      color: Color.lerp(a.color, b.color, t),
-      gradient: Gradient.lerp(a.gradient, b.gradient, t),
-    );
-  }
-
-  /// Copies current [VerticalRangeAnnotation] to a new [VerticalRangeAnnotation],
-  /// and replaces provided values.
-  VerticalRangeAnnotation copyWith({
-    double? x1,
-    double? x2,
-    Color? color,
-    Gradient? gradient,
-  }) {
-    return VerticalRangeAnnotation(
-      x1: x1 ?? this.x1,
-      x2: x2 ?? this.x2,
-      color: color ?? this.color,
-      gradient: gradient ?? this.gradient,
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        x1,
-        x2,
-        color,
-        gradient,
-      ];
-}
 
 
