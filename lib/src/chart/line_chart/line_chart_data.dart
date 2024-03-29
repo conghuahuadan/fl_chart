@@ -606,32 +606,6 @@ Color _defaultGetDotStrokeColor(
   return color.darken();
 }
 
-/// The callback passed to get the painter of a [FlSpot]
-///
-/// The callback receives [FlSpot], which is the target spot,
-/// [LineChartBarData] is the chart's bar.
-/// [int] is the index position of the spot.
-/// It should return a [FlDotPainter] that needs to be used for drawing target.
-typedef GetDotPainterCallback = FlDotPainter Function(
-  FlSpot,
-  double,
-  LineChartBarData,
-  int,
-);
-
-FlDotPainter _defaultGetDotPainter(
-  FlSpot spot,
-  double xPercentage,
-  LineChartBarData bar,
-  int index, {
-  double? size,
-}) {
-  return FlDotCirclePainter(
-    radius: size,
-    color: _defaultGetDotColor(spot, xPercentage, bar),
-    strokeColor: _defaultGetDotStrokeColor(spot, xPercentage, bar),
-  );
-}
 
 /// This class holds data about drawing spot dots on the drawing bar line.
 class FlDotData with EquatableMixin {
@@ -641,7 +615,6 @@ class FlDotData with EquatableMixin {
   const FlDotData({
     this.show = true,
     this.checkToShowDot = showAllDots,
-    this.getDotPainter = _defaultGetDotPainter,
   });
 
   /// Determines show or hide all dots.
@@ -650,16 +623,12 @@ class FlDotData with EquatableMixin {
   /// Checks to show or hide an individual dot.
   final CheckToShowDot checkToShowDot;
 
-  /// Callback which is called to set the painter of the given [FlSpot].
-  /// The [FlSpot] is provided as parameter to this callback
-  final GetDotPainterCallback getDotPainter;
 
   /// Lerps a [FlDotData] based on [t] value, check [Tween.lerp].
   static FlDotData lerp(FlDotData a, FlDotData b, double t) {
     return FlDotData(
       show: b.show,
       checkToShowDot: b.checkToShowDot,
-      getDotPainter: b.getDotPainter,
     );
   }
 
@@ -668,7 +637,6 @@ class FlDotData with EquatableMixin {
   List<Object?> get props => [
         show,
         checkToShowDot,
-        getDotPainter,
       ];
 }
 
