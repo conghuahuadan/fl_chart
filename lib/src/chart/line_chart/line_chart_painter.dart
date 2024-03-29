@@ -103,30 +103,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
         super.drawExtraLines(context, canvasWrapper, holder);
       }
 
-      final indicatorsData = data.lineTouchData
-          .getTouchedSpotIndicator(barData, barData.showingIndicators);
-
-      if (indicatorsData.length != barData.showingIndicators.length) {
-        throw Exception(
-          'indicatorsData and touchedSpotOffsets size should be same',
-        );
-      }
-
-      for (var j = 0; j < barData.showingIndicators.length; j++) {
-        final indicatorData = indicatorsData[j];
-        final index = barData.showingIndicators[j];
-        if (index < 0 || index >= barData.spots.length) {
-          continue;
-        }
-        final spot = barData.spots[index];
-
-        if (indicatorData == null) {
-          continue;
-        }
-        lineIndexDrawingInfo.add(
-          LineIndexDrawingInfo(barData, i, spot, index, indicatorData),
-        );
-      }
     }
 
     drawTouchedSpotsIndicator(canvasWrapper, lineIndexDrawingInfo, holder);
@@ -358,14 +334,8 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       }
 
       /// For drawing the indicator line
-      final lineStartY = min(
-        data.maxY,
-        max(data.minY, data.lineTouchData.getTouchLineStart(barData, index)),
-      );
-      final lineEndY = min(
-        data.maxY,
-        max(data.minY, data.lineTouchData.getTouchLineEnd(barData, index)),
-      );
+      final lineStartY = data.maxY;
+      final lineEndY = data.maxY;
       final lineStart =
           Offset(touchedSpot.dx, getPixelY(lineStartY, viewSize, holder));
       var lineEnd =
@@ -1231,24 +1201,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     double? smallestDistance;
     for (final spot in barData.spots) {
       if (spot.isNull()) continue;
-      final distance = data.lineTouchData.distanceCalculator(
-        touchedPoint,
-        Offset(
-          getPixelX(spot.x, viewSize, holder),
-          getPixelY(spot.y, viewSize, holder),
-        ),
-      );
-
-      if (distance <= data.lineTouchData.touchSpotThreshold) {
-        smallestDistance ??= distance;
-
-        if (distance < smallestDistance) {
-          sortedSpots.insert(0, spot);
-          smallestDistance = distance;
-        } else {
-          sortedSpots.add(spot);
-        }
-      }
     }
 
     if (sortedSpots.isNotEmpty) {

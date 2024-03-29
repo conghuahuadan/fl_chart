@@ -25,7 +25,6 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
     FlClipData? clipData,
     Color? backgroundColor,
     super.borderData,
-    required super.touchData,
     ExtraLinesData? extraLinesData,
   })  :
         rangeAnnotations = rangeAnnotations ?? const RangeAnnotations(),
@@ -71,7 +70,6 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
         clipData,
         backgroundColor,
         borderData,
-        touchData,
         extraLinesData,
       ];
 }

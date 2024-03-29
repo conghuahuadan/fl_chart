@@ -13,7 +13,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
 
   LineChartData({
     this.lineBarsData = const [],
-    this.lineTouchData = const LineTouchData(),
     super.borderData,
     double? minX,
     double? maxX,
@@ -24,7 +23,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
     super.clipData = const FlClipData.none(),
     super.backgroundColor,
   }) : super(
-          touchData: lineTouchData,
           minX: minX ?? double.nan,
           maxX: maxX ?? double.nan,
           minY: minY ?? double.nan,
@@ -33,11 +31,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
 
   /// [LineChart] draws some lines in various shapes and overlaps them.
   final List<LineChartBarData> lineBarsData;
-
-
-  /// Handles touch behaviors and responses.
-  final LineTouchData lineTouchData;
-
 
   /// Lerps a [BaseChartData] based on [t] value, check [Tween.lerp].
   @override
@@ -55,7 +48,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         clipData: b.clipData,
         lineBarsData:
             lerpLineChartBarDataList(a.lineBarsData, b.lineBarsData, t)!,
-        lineTouchData: b.lineTouchData,
       );
     } else {
       throw Exception('Illegal State');
@@ -68,7 +60,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
     List<LineChartBarData>? lineBarsData,
     RangeAnnotations? rangeAnnotations,
     ExtraLinesData? extraLinesData,
-    LineTouchData? lineTouchData,
     FlGridData? gridData,
     FlBorderData? borderData,
     double? minX,
@@ -82,7 +73,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   }) {
     return LineChartData(
       lineBarsData: lineBarsData ?? this.lineBarsData,
-      lineTouchData: lineTouchData ?? this.lineTouchData,
       borderData: borderData ?? this.borderData,
       minX: minX ?? this.minX,
       maxX: maxX ?? this.maxX,
@@ -100,7 +90,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   List<Object?> get props => [
         lineBarsData,
         extraLinesData,
-        lineTouchData,
         borderData,
         rangeAnnotations,
         minX,
@@ -732,120 +721,6 @@ abstract class FlLineLabel with EquatableMixin {
       ];
 }
 
-/// Holds data to handle touch events, and touch responses in the [LineChart].
-///
-/// There is a touch flow, explained [here](https://github.com/imaNNeo/fl_chart/blob/main/repo_files/documentations/handle_touches.md)
-/// in a simple way, each chart's renderer captures the touch events, and passes the pointerEvent
-/// to the painter, and gets touched spot, and wraps it into a concrete [LineTouchResponse].
-class LineTouchData extends FlTouchData<LineTouchResponse> with EquatableMixin {
-  /// You can disable or enable the touch system using [enabled] flag,
-  ///
-  /// [touchCallback] notifies you about the happened touch/pointer events.
-  /// It gives you a [FlTouchEvent] which is the happened event such as [FlPointerHoverEvent], [FlTapUpEvent], ...
-  /// It also gives you a [LineTouchResponse] which contains information
-  /// about the elements that has touched.
-  ///
-  /// Using [mouseCursorResolver] you can change the mouse cursor
-  /// based on the provided [FlTouchEvent] and [LineTouchResponse]
-  ///
-  /// if [handleBuiltInTouches] is true, [LineChart] shows a tooltip popup on top of the spots if
-  /// touch occurs (or you can show it manually using, [LineChartData.showingTooltipIndicators])
-  /// and also it shows an indicator (contains a thicker line and larger dot on the targeted spot),
-  /// You can define how this indicator looks like through [getTouchedSpotIndicator] callback,
-  /// You can customize this tooltip using [touchTooltipData], indicator lines starts from position
-  /// controlled by [getTouchLineStart] and ends at position controlled by [getTouchLineEnd].
-  /// If you need to have a distance threshold for handling touches, use [touchSpotThreshold].
-  const LineTouchData({
-    bool enabled = true,
-    BaseTouchCallback<LineTouchResponse>? touchCallback,
-    MouseCursorResolver<LineTouchResponse>? mouseCursorResolver,
-    Duration? longPressDuration,
-    this.touchTooltipData = const LineTouchTooltipData(),
-    this.getTouchedSpotIndicator = defaultTouchedIndicators,
-    this.touchSpotThreshold = 10,
-    this.distanceCalculator = _xDistance,
-    this.handleBuiltInTouches = true,
-    this.getTouchLineStart = defaultGetTouchLineStart,
-    this.getTouchLineEnd = defaultGetTouchLineEnd,
-  }) : super(
-          enabled,
-          touchCallback,
-          mouseCursorResolver,
-          longPressDuration,
-        );
-
-  /// Configs of how touch tooltip popup.
-  final LineTouchTooltipData touchTooltipData;
-
-  /// Configs of how touch indicator looks like.
-  final GetTouchedSpotIndicator getTouchedSpotIndicator;
-
-  /// Distance threshold to handle the touch event.
-  final double touchSpotThreshold;
-
-  /// Distance function used when finding closest points to touch point
-  final CalculateTouchDistance distanceCalculator;
-
-  /// Determines to handle default built-in touch responses,
-  /// [LineTouchResponse] shows a tooltip popup above the touched spot.
-  final bool handleBuiltInTouches;
-
-  /// The starting point on y axis of the touch line. By default, line starts on the bottom of
-  /// the chart.
-  final GetTouchLineY getTouchLineStart;
-
-  /// The end point on y axis of the touch line. By default, line ends at the touched point.
-  /// If line end is overlap with the dot, it will be automatically adjusted to the edge of the dot.
-  final GetTouchLineY getTouchLineEnd;
-
-  /// Copies current [LineTouchData] to a new [LineTouchData],
-  /// and replaces provided values.
-  LineTouchData copyWith({
-    bool? enabled,
-    BaseTouchCallback<LineTouchResponse>? touchCallback,
-    MouseCursorResolver<LineTouchResponse>? mouseCursorResolver,
-    Duration? longPressDuration,
-    LineTouchTooltipData? touchTooltipData,
-    GetTouchedSpotIndicator? getTouchedSpotIndicator,
-    double? touchSpotThreshold,
-    CalculateTouchDistance? distanceCalculator,
-    GetTouchLineY? getTouchLineStart,
-    GetTouchLineY? getTouchLineEnd,
-    bool? handleBuiltInTouches,
-  }) {
-    return LineTouchData(
-      enabled: enabled ?? this.enabled,
-      touchCallback: touchCallback ?? this.touchCallback,
-      mouseCursorResolver: mouseCursorResolver ?? this.mouseCursorResolver,
-      longPressDuration: longPressDuration ?? this.longPressDuration,
-      touchTooltipData: touchTooltipData ?? this.touchTooltipData,
-      getTouchedSpotIndicator:
-          getTouchedSpotIndicator ?? this.getTouchedSpotIndicator,
-      touchSpotThreshold: touchSpotThreshold ?? this.touchSpotThreshold,
-      distanceCalculator: distanceCalculator ?? this.distanceCalculator,
-      getTouchLineStart: getTouchLineStart ?? this.getTouchLineStart,
-      getTouchLineEnd: getTouchLineEnd ?? this.getTouchLineEnd,
-      handleBuiltInTouches: handleBuiltInTouches ?? this.handleBuiltInTouches,
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        enabled,
-        touchCallback,
-        mouseCursorResolver,
-        longPressDuration,
-        touchTooltipData,
-        getTouchedSpotIndicator,
-        touchSpotThreshold,
-        distanceCalculator,
-        handleBuiltInTouches,
-        getTouchLineStart,
-        getTouchLineEnd,
-      ];
-}
-
 /// Used for showing touch indicators (a thicker line and larger dot on the targeted spot).
 ///
 /// It gives you the [spotIndexes] that touch happened, or manually targeted,
@@ -1153,30 +1028,6 @@ class ShowingTooltipIndicators with EquatableMixin {
   List<Object?> get props => [showingSpots];
 }
 
-/// Holds information about touch response in the [LineChart].
-///
-/// You can override [LineTouchData.touchCallback] to handle touch events,
-/// it gives you a [LineTouchResponse] and you can do whatever you want.
-class LineTouchResponse extends BaseTouchResponse {
-  /// If touch happens, [LineChart] processes it internally and
-  /// passes out a list of [lineBarSpots] it gives you information about the touched spot.
-  /// They are sorted based on their distance to the touch event
-  const LineTouchResponse(this.lineBarSpots);
-
-  /// touch happened on these spots
-  /// (if a single line provided on the chart, [lineBarSpots]'s length will be 1 always)
-  final List<TouchLineBarSpot>? lineBarSpots;
-
-  /// Copies current [LineTouchResponse] to a new [LineTouchResponse],
-  /// and replaces provided values.
-  LineTouchResponse copyWith({
-    List<TouchLineBarSpot>? lineBarSpots,
-  }) {
-    return LineTouchResponse(
-      lineBarSpots ?? this.lineBarSpots,
-    );
-  }
-}
 
 /// It lerps a [LineChartData] to another [LineChartData] (handles animation for updating values)
 class LineChartDataTween extends Tween<LineChartData> {

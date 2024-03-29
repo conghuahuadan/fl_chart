@@ -39,7 +39,7 @@ class LineChartLeaf extends LeafRenderObjectWidget {
 // coverage:ignore-end
 
 /// Renders our LineChart, also handles hitTest.
-class RenderLineChart extends RenderBaseChart<LineTouchResponse> {
+class RenderLineChart extends RenderBaseChart {
   RenderLineChart(
     BuildContext context,
     LineChartData data,
@@ -49,7 +49,6 @@ class RenderLineChart extends RenderBaseChart<LineTouchResponse> {
         _targetData = targetData,
         _textScaler = textScaler,
         super(
-          targetData.lineTouchData,
           context,
         );
 
@@ -66,7 +65,6 @@ class RenderLineChart extends RenderBaseChart<LineTouchResponse> {
   set targetData(LineChartData value) {
     if (_targetData == value) return;
     _targetData = value;
-    super.updateBaseTouchData(_targetData.lineTouchData);
     markNeedsPaint();
   }
 
@@ -99,15 +97,5 @@ class RenderLineChart extends RenderBaseChart<LineTouchResponse> {
       paintHolder,
     );
     canvas.restore();
-  }
-
-  @override
-  LineTouchResponse getResponseAtLocation(Offset localPosition) {
-    final touchedSpots = painter.handleTouch(
-      localPosition,
-      mockTestSize ?? size,
-      paintHolder,
-    );
-    return LineTouchResponse(touchedSpots);
   }
 }

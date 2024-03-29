@@ -16,14 +16,11 @@ abstract class BaseChartData with EquatableMixin {
   /// [touchData] defines the touch behavior and responses.
   BaseChartData({
     FlBorderData? borderData,
-    required this.touchData,
   }) : borderData = borderData ?? FlBorderData();
 
   /// Holds data to drawing border around the chart.
   FlBorderData borderData;
 
-  /// Holds data needed to touch behavior and responses.
-  FlTouchData touchData;
 
   BaseChartData lerp(BaseChartData a, BaseChartData b, double t);
 
@@ -31,7 +28,6 @@ abstract class BaseChartData with EquatableMixin {
   @override
   List<Object?> get props => [
         borderData,
-        touchData,
       ];
 }
 
@@ -75,47 +71,6 @@ class FlBorderData with EquatableMixin {
   List<Object?> get props => [
         show,
         border,
-      ];
-}
-
-/// Holds data to handle touch events, and touch responses in abstract way.
-///
-/// There is a touch flow, explained [here](https://github.com/imaNNeo/fl_chart/blob/main/repo_files/documentations/handle_touches.md)
-/// in a simple way, each chart's renderer captures the touch events, and passes the pointerEvent
-/// to the painter, and gets touched spot, and wraps it into a concrete [BaseTouchResponse].
-abstract class FlTouchData<R extends BaseTouchResponse> with EquatableMixin {
-  /// You can disable or enable the touch system using [enabled] flag,
-  const FlTouchData(
-    this.enabled,
-    this.touchCallback,
-    this.mouseCursorResolver,
-    this.longPressDuration,
-  );
-
-  /// You can disable or enable the touch system using [enabled] flag,
-  final bool enabled;
-
-  /// [touchCallback] notifies you about the happened touch/pointer events.
-  /// It gives you a [FlTouchEvent] which is the happened event such as [FlPointerHoverEvent], [FlTapUpEvent], ...
-  /// It also gives you a [BaseTouchResponse] which is the chart specific type and contains information
-  /// about the elements that has touched.
-  final BaseTouchCallback<R>? touchCallback;
-
-  /// Using [mouseCursorResolver] you can change the mouse cursor
-  /// based on the provided [FlTouchEvent] and [BaseTouchResponse]
-  final MouseCursorResolver<R>? mouseCursorResolver;
-
-  /// This property that allows to customize the duration of the longPress gesture.
-  /// default to 500 milliseconds refer to [kLongPressTimeout].
-  final Duration? longPressDuration;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        enabled,
-        touchCallback,
-        mouseCursorResolver,
-        longPressDuration,
       ];
 }
 
@@ -172,25 +127,6 @@ class FlClipData with EquatableMixin {
   /// Used for equality check, see [EquatableMixin].
   @override
   List<Object?> get props => [top, bottom, left, right];
-}
-
-/// Chart's touch callback.
-typedef BaseTouchCallback<R extends BaseTouchResponse> = void Function(
-  FlTouchEvent,
-  R?,
-);
-
-/// It gives you the happened [FlTouchEvent] and existed [R] data at the event's location,
-/// then you should provide a [MouseCursor] to change the cursor at the event's location.
-/// For example you can pass the [SystemMouseCursors.click] to change the mouse cursor to click.
-typedef MouseCursorResolver<R extends BaseTouchResponse> = MouseCursor Function(
-  FlTouchEvent,
-  R?,
-);
-
-/// This class holds the touch response details of charts.
-abstract class BaseTouchResponse {
-  const BaseTouchResponse();
 }
 
 /// Controls an element horizontal alignment to given point.
