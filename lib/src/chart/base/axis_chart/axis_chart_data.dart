@@ -15,7 +15,6 @@ import 'package:flutter/material.dart' hide Image;
 /// each child have to set it in their constructor.
 abstract class AxisChartData extends BaseChartData with EquatableMixin {
   AxisChartData({
-    FlGridData? gridData,
     required this.titlesData,
     RangeAnnotations? rangeAnnotations,
     required this.minX,
@@ -29,14 +28,13 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
     super.borderData,
     required super.touchData,
     ExtraLinesData? extraLinesData,
-  })  : gridData = gridData ?? const FlGridData(),
+  })  :
         rangeAnnotations = rangeAnnotations ?? const RangeAnnotations(),
         baselineX = baselineX ?? 0,
         baselineY = baselineY ?? 0,
         clipData = clipData ?? const FlClipData.none(),
         backgroundColor = backgroundColor ?? Colors.transparent,
         extraLinesData = extraLinesData ?? const ExtraLinesData();
-  final FlGridData gridData;
   final FlTitlesData titlesData;
   final RangeAnnotations rangeAnnotations;
 
@@ -65,7 +63,6 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
   /// Used for equality check, see [EquatableMixin].
   @override
   List<Object?> get props => [
-        gridData,
         titlesData,
         rangeAnnotations,
         minX,

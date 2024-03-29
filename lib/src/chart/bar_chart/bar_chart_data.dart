@@ -56,7 +56,6 @@ class BarChartData extends AxisChartData with EquatableMixin {
               const FlTitlesData(
                 topTitles: AxisTitles(),
               ),
-          gridData: gridData ?? const FlGridData(),
           rangeAnnotations: rangeAnnotations ?? const RangeAnnotations(),
           touchData: barTouchData ?? BarTouchData(),
           extraLinesData: extraLinesData ?? const ExtraLinesData(),
@@ -102,7 +101,6 @@ class BarChartData extends AxisChartData with EquatableMixin {
       titlesData: titlesData ?? this.titlesData,
       rangeAnnotations: rangeAnnotations ?? this.rangeAnnotations,
       barTouchData: barTouchData ?? this.barTouchData,
-      gridData: gridData ?? this.gridData,
       borderData: borderData ?? this.borderData,
       maxY: maxY ?? this.maxY,
       minY: minY ?? this.minY,
@@ -124,7 +122,6 @@ class BarChartData extends AxisChartData with EquatableMixin {
         rangeAnnotations:
             RangeAnnotations.lerp(a.rangeAnnotations, b.rangeAnnotations, t),
         barTouchData: b.barTouchData,
-        gridData: FlGridData.lerp(a.gridData, b.gridData, t),
         borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
         maxY: lerpDouble(a.maxY, b.maxY, t),
         minY: lerpDouble(a.minY, b.minY, t),
@@ -149,7 +146,6 @@ class BarChartData extends AxisChartData with EquatableMixin {
         maxY,
         minY,
         baselineY,
-        gridData,
         borderData,
         rangeAnnotations,
         backgroundColor,

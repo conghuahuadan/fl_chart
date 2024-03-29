@@ -50,102 +50,12 @@ abstract class AxisChartPainter<D extends AxisChartData>
   @visibleForTesting
   void drawGrid(CanvasWrapper canvasWrapper, PaintHolder<D> holder) {
     final data = holder.data;
-    if (!data.gridData.show) {
-      return;
-    }
+
     final viewSize = canvasWrapper.size;
     // Show Vertical Grid
-    if (data.gridData.drawVerticalLine) {
-      final verticalInterval = data.gridData.verticalInterval ??
-          Utils().getEfficientInterval(
-            viewSize.width,
-            data.horizontalDiff,
-          );
-      final axisValues = AxisChartHelper().iterateThroughAxis(
-        min: data.minX,
-        minIncluded: false,
-        max: data.maxX,
-        maxIncluded: false,
-        baseLine: data.baselineX,
-        interval: verticalInterval,
-      );
-      for (final axisValue in axisValues) {
-        if (!data.gridData.checkToShowVerticalLine(axisValue)) {
-          continue;
-        }
-        final bothX = getPixelX(axisValue, viewSize, holder);
-        final x1 = bothX;
-        const y1 = 0.0;
-        final x2 = bothX;
-        final y2 = viewSize.height;
-        final from = Offset(x1, y1);
-        final to = Offset(x2, y2);
-
-        final flLineStyle = data.gridData.getDrawingVerticalLine(axisValue);
-        _gridPaint
-          ..setColorOrGradientForLine(
-            flLineStyle.color,
-            flLineStyle.gradient,
-            from: from,
-            to: to,
-          )
-          ..strokeWidth = flLineStyle.strokeWidth
-          ..transparentIfWidthIsZero();
-
-        canvasWrapper.drawDashedLine(
-          from,
-          to,
-          _gridPaint,
-          flLineStyle.dashArray,
-        );
-      }
-    }
 
     // Show Horizontal Grid
-    if (data.gridData.drawHorizontalLine) {
-      final horizontalInterval = data.gridData.horizontalInterval ??
-          Utils().getEfficientInterval(viewSize.height, data.verticalDiff);
 
-      final axisValues = AxisChartHelper().iterateThroughAxis(
-        min: data.minY,
-        minIncluded: false,
-        max: data.maxY,
-        maxIncluded: false,
-        baseLine: data.baselineY,
-        interval: horizontalInterval,
-      );
-      for (final axisValue in axisValues) {
-        if (!data.gridData.checkToShowHorizontalLine(axisValue)) {
-          continue;
-        }
-        final flLine = data.gridData.getDrawingHorizontalLine(axisValue);
-
-        final bothY = getPixelY(axisValue, viewSize, holder);
-        const x1 = 0.0;
-        final y1 = bothY;
-        final x2 = viewSize.width;
-        final y2 = bothY;
-        final from = Offset(x1, y1);
-        final to = Offset(x2, y2);
-
-        _gridPaint
-          ..setColorOrGradientForLine(
-            flLine.color,
-            flLine.gradient,
-            from: from,
-            to: to,
-          )
-          ..strokeWidth = flLine.strokeWidth
-          ..transparentIfWidthIsZero();
-
-        canvasWrapper.drawDashedLine(
-          from,
-          to,
-          _gridPaint,
-          flLine.dashArray,
-        );
-      }
-    }
   }
 
   /// This function draws a colored background behind the chart.

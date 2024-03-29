@@ -135,9 +135,6 @@ class _LineChartSample0State extends State<LineChartSample0> {
 
   LineChartData mainData() {
     return LineChartData(
-      gridData: const FlGridData(
-        show: false,
-      ),
       titlesData: const FlTitlesData(
         show: false,
       ),

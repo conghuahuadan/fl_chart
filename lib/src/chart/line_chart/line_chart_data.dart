@@ -47,7 +47,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
     super.extraLinesData = const ExtraLinesData(),
     this.lineTouchData = const LineTouchData(),
     this.showingTooltipIndicators = const [],
-    super.gridData = const FlGridData(),
     super.borderData,
     super.rangeAnnotations = const RangeAnnotations(),
     double? minX,
@@ -96,7 +95,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         clipData: b.clipData,
         extraLinesData:
             ExtraLinesData.lerp(a.extraLinesData, b.extraLinesData, t),
-        gridData: FlGridData.lerp(a.gridData, b.gridData, t),
         titlesData: FlTitlesData.lerp(a.titlesData, b.titlesData, t),
         rangeAnnotations:
             RangeAnnotations.lerp(a.rangeAnnotations, b.rangeAnnotations, t),
@@ -142,7 +140,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
       lineTouchData: lineTouchData ?? this.lineTouchData,
       showingTooltipIndicators:
           showingTooltipIndicators ?? this.showingTooltipIndicators,
-      gridData: gridData ?? this.gridData,
       borderData: borderData ?? this.borderData,
       minX: minX ?? this.minX,
       maxX: maxX ?? this.maxX,
@@ -164,7 +161,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         extraLinesData,
         lineTouchData,
         showingTooltipIndicators,
-        gridData,
         borderData,
         rangeAnnotations,
         minX,

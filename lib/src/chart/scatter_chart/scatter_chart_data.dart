@@ -54,7 +54,6 @@ class ScatterChartData extends AxisChartData with EquatableMixin {
         showingTooltipIndicators = showingTooltipIndicators ?? const [],
         scatterLabelSettings = scatterLabelSettings ?? ScatterLabelSettings(),
         super(
-          gridData: gridData ?? const FlGridData(),
           touchData: scatterTouchData ?? ScatterTouchData(),
           titlesData: titlesData ?? const FlTitlesData(),
           clipData: clipData ?? const FlClipData.none(),
@@ -93,7 +92,6 @@ class ScatterChartData extends AxisChartData with EquatableMixin {
           b.showingTooltipIndicators,
           t,
         ),
-        gridData: FlGridData.lerp(a.gridData, b.gridData, t),
         borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
         minX: lerpDouble(a.minX, b.minX, t),
         maxX: lerpDouble(a.maxX, b.maxX, t),
@@ -139,7 +137,6 @@ class ScatterChartData extends AxisChartData with EquatableMixin {
       scatterTouchData: scatterTouchData ?? this.scatterTouchData,
       showingTooltipIndicators:
           showingTooltipIndicators ?? this.showingTooltipIndicators,
-      gridData: gridData ?? this.gridData,
       borderData: borderData ?? this.borderData,
       minX: minX ?? this.minX,
       maxX: maxX ?? this.maxX,
@@ -159,7 +156,6 @@ class ScatterChartData extends AxisChartData with EquatableMixin {
         scatterSpots,
         scatterTouchData,
         showingTooltipIndicators,
-        gridData,
         titlesData,
         rangeAnnotations,
         minX,
