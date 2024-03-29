@@ -117,19 +117,7 @@ class SideTitlesWidget extends StatelessWidget {
           axisViewSize,
           axisMax - axisMin,
         );
-    if (isHorizontal && axisChartData is BarChartData) {
-      final barChartData = axisChartData as BarChartData;
-      if (barChartData.barGroups.isEmpty) {
-        return [];
-      }
-      final xLocations = barChartData.calculateGroupsX(axisViewSize);
-      axisPositions = xLocations.asMap().entries.map((e) {
-        final index = e.key;
-        final xLocation = e.value;
-        final xValue = barChartData.barGroups[index].x;
-        return AxisSideTitleMetaData(xValue.toDouble(), xLocation);
-      }).toList();
-    } else {
+    {
       final axisValues = AxisChartHelper().iterateThroughAxis(
         min: axisMin,
         max: axisMax,

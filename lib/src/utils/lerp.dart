@@ -111,31 +111,6 @@ List<BetweenBarsData>? lerpBetweenBarsDataList(
 ) =>
     lerpList(a, b, t, lerp: BetweenBarsData.lerp);
 
-/// Lerps [BarChartGroupData] list based on [t] value, check [Tween.lerp].
-List<BarChartGroupData>? lerpBarChartGroupDataList(
-  List<BarChartGroupData>? a,
-  List<BarChartGroupData>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: BarChartGroupData.lerp);
-
-/// Lerps [BarChartRodData] list based on [t] value, check [Tween.lerp].
-List<BarChartRodData>? lerpBarChartRodDataList(
-  List<BarChartRodData>? a,
-  List<BarChartRodData>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: BarChartRodData.lerp);
-
-
-/// Lerps [BarChartRodStackItem] list based on [t] value, check [Tween.lerp].
-List<BarChartRodStackItem>? lerpBarChartRodStackList(
-  List<BarChartRodStackItem>? a,
-  List<BarChartRodStackItem>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: BarChartRodStackItem.lerp);
-
 
 /// Lerps between a [LinearGradient] colors, based on [t]
 Color lerpGradient(List<Color> colors, List<double> stops, double t) {
