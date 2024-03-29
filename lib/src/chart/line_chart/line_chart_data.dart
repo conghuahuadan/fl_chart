@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/extensions/color_extension.dart';
-import 'package:fl_chart/src/extensions/gradient_extension.dart';
 import 'package:fl_chart/src/utils/lerp.dart';
 import 'package:flutter/material.dart' hide Image;
 
@@ -571,38 +570,7 @@ bool showAllSpotsBelowLine(FlSpot spot) {
 /// It should return a [Color] that needs to be used for drawing target.
 typedef GetDotColorCallback = Color Function(FlSpot, double, LineChartBarData);
 
-/// If there is one color in [LineChartBarData.mainColors], it returns that color,
-/// otherwise it returns the color along the gradient colors based on the [xPercentage].
-Color _defaultGetDotColor(FlSpot _, double xPercentage, LineChartBarData bar) {
-  if (bar.gradient != null && bar.gradient is LinearGradient) {
-    return lerpGradient(
-      bar.gradient!.colors,
-      bar.gradient!.getSafeColorStops(),
-      xPercentage / 100,
-    );
-  }
-  return bar.gradient?.colors.first ?? bar.color ?? Colors.blueGrey;
-}
 
-/// If there is one color in [LineChartBarData.mainColors], it returns that color in a darker mode,
-/// otherwise it returns the color along the gradient colors based on the [xPercentage] in a darker mode.
-Color _defaultGetDotStrokeColor(
-  FlSpot spot,
-  double xPercentage,
-  LineChartBarData bar,
-) {
-  Color color;
-  if (bar.gradient != null && bar.gradient is LinearGradient) {
-    color = lerpGradient(
-      bar.gradient!.colors,
-      bar.gradient!.getSafeColorStops(),
-      xPercentage / 100,
-    );
-  } else {
-    color = bar.gradient?.colors.first ?? bar.color ?? Colors.blueGrey;
-  }
-  return color.darken();
-}
 
 
 /// This class holds data about drawing spot dots on the drawing bar line.
