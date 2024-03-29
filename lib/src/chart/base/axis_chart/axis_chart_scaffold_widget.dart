@@ -1,6 +1,4 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/chart/base/axis_chart/side_titles/side_titles_widget.dart';
-import 'package:fl_chart/src/extensions/fl_titles_data_extension.dart';
 import 'package:flutter/material.dart';
 
 class AxisChartScaffoldWidget extends StatelessWidget {
