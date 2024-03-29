@@ -40,26 +40,9 @@ class SideTitlesWidget extends StatelessWidget {
 
   double get axisBaseLine => isHorizontal ? baselineX : baselineY;
 
-  FlTitlesData get titlesData => axisChartData.titlesData;
-
   bool get isLeftOrTop => side == AxisSide.left || side == AxisSide.top;
 
   bool get isRightOrBottom => side == AxisSide.right || side == AxisSide.bottom;
-
-  AxisTitles get axisTitles {
-    switch (side) {
-      case AxisSide.left:
-        return titlesData.leftTitles;
-      case AxisSide.top:
-        return titlesData.topTitles;
-      case AxisSide.right:
-        return titlesData.rightTitles;
-      case AxisSide.bottom:
-        return titlesData.bottomTitles;
-    }
-  }
-
-  SideTitles get sideTitles => axisTitles.sideTitles;
 
   Axis get direction => isHorizontal ? Axis.horizontal : Axis.vertical;
 
@@ -79,94 +62,15 @@ class SideTitlesWidget extends StatelessWidget {
   }
 
   EdgeInsets get thisSidePadding {
-    final titlesPadding = titlesData.allSidesPadding;
-    final borderPadding = axisChartData.borderData.allSidesPadding;
-    switch (side) {
-      case AxisSide.right:
-      case AxisSide.left:
-        return titlesPadding.onlyTopBottom + borderPadding.onlyTopBottom;
-      case AxisSide.top:
-      case AxisSide.bottom:
-        return titlesPadding.onlyLeftRight + borderPadding.onlyLeftRight;
-    }
+    return EdgeInsets.all(0);
   }
 
   double get thisSidePaddingTotal {
-    final borderPadding = axisChartData.borderData.allSidesPadding;
-    final titlesPadding = titlesData.allSidesPadding;
-    switch (side) {
-      case AxisSide.right:
-      case AxisSide.left:
-        return titlesPadding.vertical + borderPadding.vertical;
-      case AxisSide.top:
-      case AxisSide.bottom:
-        return titlesPadding.horizontal + borderPadding.horizontal;
-    }
-  }
-
-  List<AxisSideTitleWidgetHolder> makeWidgets(
-    double axisViewSize,
-    double axisMin,
-    double axisMax,
-    AxisSide side,
-  ) {
-    List<AxisSideTitleMetaData> axisPositions;
-    final interval = sideTitles.interval ??
-        Utils().getEfficientInterval(
-          axisViewSize,
-          axisMax - axisMin,
-        );
-    {
-      final axisValues = AxisChartHelper().iterateThroughAxis(
-        min: axisMin,
-        max: axisMax,
-        baseLine: axisBaseLine,
-        interval: interval,
-      );
-      axisPositions = axisValues.map((axisValue) {
-        final axisDiff = axisMax - axisMin;
-        var portion = 0.0;
-        if (axisDiff > 0) {
-          portion = (axisValue - axisMin) / axisDiff;
-        }
-        if (isVertical) {
-          portion = 1 - portion;
-        }
-        final axisLocation = portion * axisViewSize;
-        return AxisSideTitleMetaData(axisValue, axisLocation);
-      }).toList();
-    }
-    return axisPositions.map(
-      (metaData) {
-        return AxisSideTitleWidgetHolder(
-          metaData,
-          sideTitles.getTitlesWidget(
-            metaData.axisValue,
-            TitleMeta(
-              min: axisMin,
-              max: axisMax,
-              appliedInterval: interval,
-              sideTitles: sideTitles,
-              formattedValue: Utils().formatNumber(
-                axisMin,
-                axisMax,
-                metaData.axisValue,
-              ),
-              axisSide: side,
-              parentAxisSize: axisViewSize,
-              axisPosition: metaData.axisPixelLocation,
-            ),
-          ),
-        );
-      },
-    ).toList();
+    return 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!axisTitles.showAxisTitles && !axisTitles.showSideTitles) {
-      return Container();
-    }
     final axisViewSize = isHorizontal ? parentSize.width : parentSize.height;
     return Align(
       alignment: alignment,
@@ -174,38 +78,7 @@ class SideTitlesWidget extends StatelessWidget {
         direction: counterDirection,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (isLeftOrTop && axisTitles.axisNameWidget != null)
-            _AxisTitleWidget(
-              axisTitles: axisTitles,
-              side: side,
-              axisViewSize: axisViewSize,
-            ),
-          if (sideTitles.showTitles)
-            Container(
-              width: isHorizontal ? axisViewSize : sideTitles.reservedSize,
-              height: isHorizontal ? sideTitles.reservedSize : axisViewSize,
-              margin: thisSidePadding,
-              child: SideTitlesFlex(
-                direction: direction,
-                axisSideMetaData: AxisSideMetaData(
-                  axisMin,
-                  axisMax,
-                  axisViewSize - thisSidePaddingTotal,
-                ),
-                widgetHolders: makeWidgets(
-                  axisViewSize - thisSidePaddingTotal,
-                  axisMin,
-                  axisMax,
-                  side,
-                ),
-              ),
-            ),
-          if (isRightOrBottom && axisTitles.axisNameWidget != null)
-            _AxisTitleWidget(
-              axisTitles: axisTitles,
-              side: side,
-              axisViewSize: axisViewSize,
-            ),
+
         ],
       ),
     );

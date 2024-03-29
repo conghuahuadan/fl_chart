@@ -135,9 +135,6 @@ class _LineChartSample0State extends State<LineChartSample0> {
 
   LineChartData mainData() {
     return LineChartData(
-      titlesData: const FlTitlesData(
-        show: false,
-      ),
       borderData: FlBorderData(
         show: true,
         border: Border.all(color: const Color(0xff37434d)),

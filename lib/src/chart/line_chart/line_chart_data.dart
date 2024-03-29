@@ -43,7 +43,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   LineChartData({
     this.lineBarsData = const [],
     this.betweenBarsData = const [],
-    super.titlesData = const FlTitlesData(),
     super.extraLinesData = const ExtraLinesData(),
     this.lineTouchData = const LineTouchData(),
     this.showingTooltipIndicators = const [],
@@ -95,7 +94,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         clipData: b.clipData,
         extraLinesData:
             ExtraLinesData.lerp(a.extraLinesData, b.extraLinesData, t),
-        titlesData: FlTitlesData.lerp(a.titlesData, b.titlesData, t),
         rangeAnnotations:
             RangeAnnotations.lerp(a.rangeAnnotations, b.rangeAnnotations, t),
         lineBarsData:
@@ -134,7 +132,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
     return LineChartData(
       lineBarsData: lineBarsData ?? this.lineBarsData,
       betweenBarsData: betweenBarsData ?? this.betweenBarsData,
-      titlesData: titlesData ?? this.titlesData,
       rangeAnnotations: rangeAnnotations ?? this.rangeAnnotations,
       extraLinesData: extraLinesData ?? this.extraLinesData,
       lineTouchData: lineTouchData ?? this.lineTouchData,
@@ -157,7 +154,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   List<Object?> get props => [
         lineBarsData,
         betweenBarsData,
-        titlesData,
         extraLinesData,
         lineTouchData,
         showingTooltipIndicators,
