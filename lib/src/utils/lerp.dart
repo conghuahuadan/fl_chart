@@ -76,15 +76,6 @@ List<LineChartBarData>? lerpLineChartBarDataList(
 ) =>
     lerpList(a, b, t, lerp: LineChartBarData.lerp);
 
-/// Lerps [BetweenBarsData] list based on [t] value, check [Tween.lerp].
-List<BetweenBarsData>? lerpBetweenBarsDataList(
-  List<BetweenBarsData>? a,
-  List<BetweenBarsData>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: BetweenBarsData.lerp);
-
-
 /// Lerps between a [LinearGradient] colors, based on [t]
 Color lerpGradient(List<Color> colors, List<double> stops, double t) {
   final length = colors.length;

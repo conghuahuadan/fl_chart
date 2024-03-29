@@ -40,84 +40,9 @@ abstract class AxisChartPainter<D extends AxisChartData>
     PaintHolder<D> holder,
   ) {
     super.paint(context, canvasWrapper, holder);
-    drawBackground(canvasWrapper, holder);
-    drawRangeAnnotation(canvasWrapper, holder);
-    drawGrid(canvasWrapper, holder);
-  }
-
-  @visibleForTesting
-  void drawGrid(CanvasWrapper canvasWrapper, PaintHolder<D> holder) {
-    final data = holder.data;
-
-    final viewSize = canvasWrapper.size;
-    // Show Vertical Grid
-
-    // Show Horizontal Grid
-
   }
 
   /// This function draws a colored background behind the chart.
-  @visibleForTesting
-  void drawBackground(CanvasWrapper canvasWrapper, PaintHolder<D> holder) {
-    final data = holder.data;
-    if (data.backgroundColor.opacity == 0.0) {
-      return;
-    }
-
-    final viewSize = canvasWrapper.size;
-    _backgroundPaint.color = data.backgroundColor;
-    canvasWrapper.drawRect(
-      Rect.fromLTWH(0, 0, viewSize.width, viewSize.height),
-      _backgroundPaint,
-    );
-  }
-
-  @visibleForTesting
-  void drawRangeAnnotation(CanvasWrapper canvasWrapper, PaintHolder<D> holder) {
-    final data = holder.data;
-    final viewSize = canvasWrapper.size;
-
-    if (data.rangeAnnotations.verticalRangeAnnotations.isNotEmpty) {
-      for (final annotation in data.rangeAnnotations.verticalRangeAnnotations) {
-        final from = Offset(getPixelX(annotation.x1, viewSize, holder), 0);
-        final to = Offset(
-          getPixelX(annotation.x2, viewSize, holder),
-          viewSize.height,
-        );
-
-        final rect = Rect.fromPoints(from, to);
-
-        _rangeAnnotationPaint.setColorOrGradient(
-          annotation.color,
-          annotation.gradient,
-          rect,
-        );
-
-        canvasWrapper.drawRect(rect, _rangeAnnotationPaint);
-      }
-    }
-
-    if (data.rangeAnnotations.horizontalRangeAnnotations.isNotEmpty) {
-      for (final annotation
-          in data.rangeAnnotations.horizontalRangeAnnotations) {
-        final from = Offset(0, getPixelY(annotation.y1, viewSize, holder));
-        final to = Offset(
-          viewSize.width,
-          getPixelY(annotation.y2, viewSize, holder),
-        );
-
-        final rect = Rect.fromPoints(from, to);
-
-        _rangeAnnotationPaint.setColorOrGradient(
-          annotation.color,
-          annotation.gradient,
-          rect,
-        );
-
-        canvasWrapper.drawRect(rect, _rangeAnnotationPaint);
-      }
-    }
-  }
 
   void drawExtraLines(
     BuildContext context,
