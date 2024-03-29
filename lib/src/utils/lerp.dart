@@ -23,31 +23,6 @@ List<T>? lerpList<T>(
   }
 }
 
-/// Lerps [Color] list based on [t] value, check [Tween.lerp].
-List<Color>? lerpColorList(List<Color>? a, List<Color>? b, double t) =>
-    lerpList(a, b, t, lerp: lerpColor);
-
-/// Lerps [Color] based on [t] value, check [Color.lerp].
-Color lerpColor(Color a, Color b, double t) => Color.lerp(a, b, t)!;
-
-/// Lerps [double] list based on [t] value, allows [double.infinity].
-double? lerpDoubleAllowInfinity(double? a, double? b, double t) {
-  if (a == b || (a?.isNaN == true) && (b?.isNaN == true)) {
-    return a;
-  }
-
-  if (a!.isInfinite || b!.isInfinite) {
-    return b;
-  }
-  assert(a.isFinite, 'Cannot interpolate between finite and non-finite values');
-  assert(b.isFinite, 'Cannot interpolate between finite and non-finite values');
-  assert(t.isFinite, 't must be finite when interpolating between values');
-  return a * (1.0 - t) + b * t;
-}
-
-/// Lerps [double] list based on [t] value, check [Tween.lerp].
-List<double>? lerpDoubleList(List<double>? a, List<double>? b, double t) =>
-    lerpList(a, b, t, lerp: lerpNonNullDouble);
 
 /// Lerps [int] list based on [t] value, check [Tween.lerp].
 List<int>? lerpIntList(List<int>? a, List<int>? b, double t) =>
@@ -56,8 +31,6 @@ List<int>? lerpIntList(List<int>? a, List<int>? b, double t) =>
 /// Lerps [int] list based on [t] value, check [Tween.lerp].
 int lerpInt(int a, int b, double t) => (a + (b - a) * t).round();
 
-@visibleForTesting
-double lerpNonNullDouble(double a, double b, double t) => lerpDouble(a, b, t)!;
 
 /// Lerps [FlSpot] list based on [t] value, check [Tween.lerp].
 List<FlSpot>? lerpFlSpotList(List<FlSpot>? a, List<FlSpot>? b, double t) =>
