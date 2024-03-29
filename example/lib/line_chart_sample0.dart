@@ -1,18 +1,17 @@
-import 'package:fl_chart_app/presentation/resources/app_resources.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class LineChartSample2 extends StatefulWidget {
-  const LineChartSample2({super.key});
+class LineChartSample0 extends StatefulWidget {
+  const LineChartSample0({super.key});
 
   @override
-  State<LineChartSample2> createState() => _LineChartSample2State();
+  State<LineChartSample0> createState() => _LineChartSample0State();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
+class _LineChartSample0State extends State<LineChartSample0> {
   List<Color> gradientColors = [
-    AppColors.contentColorCyan,
-    AppColors.contentColorBlue,
+    Color(0xFF50E4FF),
+    Color(0xFF2196F3),
   ];
 
   bool showAvg = false;
@@ -110,25 +109,25 @@ class _LineChartSample2State extends State<LineChartSample2> {
   LineChartData mainData() {
     return LineChartData(
       gridData: FlGridData(
-        show: true,
+        show: false,
         drawVerticalLine: true,
         horizontalInterval: 1,
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
-            color: AppColors.mainGridLineColor,
+            color: Colors.white10,
             strokeWidth: 1,
           );
         },
         getDrawingVerticalLine: (value) {
           return const FlLine(
-            color: AppColors.mainGridLineColor,
+            color: Colors.white10,
             strokeWidth: 1,
           );
         },
       ),
       titlesData: FlTitlesData(
-        show: true,
+        show: false,
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
@@ -197,7 +196,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       gridData: FlGridData(
-        show: true,
+        show: false,
         drawHorizontalLine: true,
         verticalInterval: 1,
         horizontalInterval: 1,
