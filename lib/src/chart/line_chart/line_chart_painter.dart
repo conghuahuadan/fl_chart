@@ -82,10 +82,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
 
     super.paint(context, canvasWrapper, holder);
 
-    for (final betweenBarsData in data.betweenBarsData) {
-      drawBetweenBarsArea(canvasWrapper, data, betweenBarsData, holder);
-    }
-
     if (!data.extraLinesData.extraLinesOnTop) {
       super.drawExtraLines(context, canvasWrapper, holder);
     }

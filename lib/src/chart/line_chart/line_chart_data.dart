@@ -8,42 +8,11 @@ import 'package:fl_chart/src/extensions/gradient_extension.dart';
 import 'package:fl_chart/src/utils/lerp.dart';
 import 'package:flutter/material.dart' hide Image;
 
-/// [LineChart] needs this class to render itself.
-///
-/// It holds data needed to draw a line chart,
-/// including bar lines, spots, colors, touches, ...
+
 class LineChartData extends AxisChartData with EquatableMixin {
-  /// [LineChart] draws some lines in various shapes and overlaps them.
-  /// lines are defined in [lineBarsData], sometimes you need to fill space between two bars
-  /// with a color or gradient, you can use [betweenBarsData] to achieve that.
-  ///
-  /// It draws some titles on left, top, right, bottom sides per each axis number,
-  /// you can modify [titlesData] to have your custom titles,
-  /// also you can define the axis title (one text per axis) for each side
-  /// using [axisTitleData], you can restrict the y axis using [minY] and [maxY] value,
-  /// and restrict x axis using [minX] and [maxX].
-  ///
-  /// It draws a color as a background behind everything you can set it using [backgroundColor],
-  /// then a grid over it, you can customize it using [gridData],
-  /// and it draws 4 borders around your chart, you can customize it using [borderData].
-  ///
-  /// You can annotate some regions with a highlight color using [rangeAnnotations].
-  ///
-  /// You can modify [lineTouchData] to customize touch behaviors and responses.
-  ///
-  /// you can show some tooltipIndicators (a popup with an information)
-  /// on top of each [LineChartBarData.spots] using [showingTooltipIndicators],
-  /// just put line indicator number and spots indices you want to show it on top of them.
-  ///
-  /// [LineChart] draws some horizontal or vertical lines on above or below of everything,
-  /// they are useful in some scenarios, for example you can show average line, you can fill
-  /// [extraLinesData] property to have your extra lines.
-  ///
-  /// [clipData] forces the [LineChart] to draw lines inside the chart bounding box.
+
   LineChartData({
     this.lineBarsData = const [],
-    this.betweenBarsData = const [],
-    super.extraLinesData = const ExtraLinesData(),
     this.lineTouchData = const LineTouchData(),
     this.showingTooltipIndicators = const [],
     super.borderData,
@@ -67,8 +36,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// [LineChart] draws some lines in various shapes and overlaps them.
   final List<LineChartBarData> lineBarsData;
 
-  /// Fills area between two [LineChartBarData] with a color or gradient.
-  final List<BetweenBarsData> betweenBarsData;
 
   /// Handles touch behaviors and responses.
   final LineTouchData lineTouchData;
@@ -92,14 +59,10 @@ class LineChartData extends AxisChartData with EquatableMixin {
         backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t),
         borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
         clipData: b.clipData,
-        extraLinesData:
-            ExtraLinesData.lerp(a.extraLinesData, b.extraLinesData, t),
         rangeAnnotations:
             RangeAnnotations.lerp(a.rangeAnnotations, b.rangeAnnotations, t),
         lineBarsData:
             lerpLineChartBarDataList(a.lineBarsData, b.lineBarsData, t)!,
-        betweenBarsData:
-            lerpBetweenBarsDataList(a.betweenBarsData, b.betweenBarsData, t)!,
         lineTouchData: b.lineTouchData,
         showingTooltipIndicators: b.showingTooltipIndicators,
       );
@@ -131,9 +94,7 @@ class LineChartData extends AxisChartData with EquatableMixin {
   }) {
     return LineChartData(
       lineBarsData: lineBarsData ?? this.lineBarsData,
-      betweenBarsData: betweenBarsData ?? this.betweenBarsData,
       rangeAnnotations: rangeAnnotations ?? this.rangeAnnotations,
-      extraLinesData: extraLinesData ?? this.extraLinesData,
       lineTouchData: lineTouchData ?? this.lineTouchData,
       showingTooltipIndicators:
           showingTooltipIndicators ?? this.showingTooltipIndicators,
@@ -153,7 +114,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   @override
   List<Object?> get props => [
         lineBarsData,
-        betweenBarsData,
         extraLinesData,
         lineTouchData,
         showingTooltipIndicators,
@@ -170,49 +130,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
       ];
 }
 
-/// Holds data for drawing each individual line in the [LineChart]
 class LineChartBarData with EquatableMixin {
-  /// [BarChart] draws some lines and overlaps them in the chart's view,
-  /// You can have multiple lines by splitting them,
-  /// put a [FlSpot.nullSpot] between each section.
-  /// each line passes through [spots], with hard edges by default,
-  /// [isCurved] makes it curve for drawing, and [curveSmoothness] determines the curve smoothness.
-  ///
-  /// [show] determines the drawing, if set to false, it draws nothing.
-  ///
-  /// [mainColors] determines the color of drawing line, if one color provided it applies a solid color,
-  /// otherwise it gradients between provided colors for drawing the line.
-  /// Gradient happens using provided [colorStops], [gradientFrom], [gradientTo].
-  /// if you want it draw normally, don't touch them,
-  /// check [LinearGradient] for understanding [colorStops]
-  ///
-  /// [barWidth] determines the thickness of drawing line,
-  ///
-  /// if [isCurved] is true, in some situations if the spots changes are in high values,
-  /// an overshooting will happen, we don't have any idea to solve this at the moment,
-  /// but you can set [preventCurveOverShooting] true, and update the threshold
-  /// using [preventCurveOvershootingThreshold] to achieve an acceptable curve,
-  /// check this [issue](https://github.com/imaNNeo/fl_chart/issues/25)
-  /// to overshooting understand the problem.
-  ///
-  /// [isStrokeCapRound] determines the shape of line's cap.
-  ///
-  /// [isStrokeJoinRound] determines the shape of the line joins.
-  ///
-  /// [belowBarData], and  [aboveBarData] used to fill the space below or above the drawn line,
-  /// you can fill with a solid color or a linear gradient.
-  ///
-  /// [LineChart] draws points that the line is going through [spots],
-  /// you can customize it's appearance using [dotData].
-  ///
-  /// there are some indicators with a line and bold point on each spot,
-  /// you can show them by filling [showingIndicators] with indices
-  /// you want to show indicator on them.
-  ///
-  /// [LineChart] draws the lines with dashed effect if you fill [dashArray].
-  ///
-  /// If you want to have a Step Line Chart style, just set [isStepLineChart] true,
-  /// also you can tweak the [LineChartBarData.lineChartStepData].
+
   LineChartBarData({
     this.spots = const [],
     this.show = true,
