@@ -127,13 +127,6 @@ List<BarChartRodData>? lerpBarChartRodDataList(
 ) =>
     lerpList(a, b, t, lerp: BarChartRodData.lerp);
 
-/// Lerps [PieChartSectionData] list based on [t] value, check [Tween.lerp].
-List<PieChartSectionData>? lerpPieChartSectionDataList(
-  List<PieChartSectionData>? a,
-  List<PieChartSectionData>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: PieChartSectionData.lerp);
 
 /// Lerps [BarChartRodStackItem] list based on [t] value, check [Tween.lerp].
 List<BarChartRodStackItem>? lerpBarChartRodStackList(
