@@ -14,9 +14,7 @@ class LineChartData extends AxisChartData with EquatableMixin {
   LineChartData({
     this.lineBarsData = const [],
     this.lineTouchData = const LineTouchData(),
-    this.showingTooltipIndicators = const [],
     super.borderData,
-    super.rangeAnnotations = const RangeAnnotations(),
     double? minX,
     double? maxX,
     super.baselineX,
@@ -40,10 +38,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// Handles touch behaviors and responses.
   final LineTouchData lineTouchData;
 
-  /// You can show some tooltipIndicators (a popup with an information)
-  /// on top of each [LineChartBarData.spots] using [showingTooltipIndicators],
-  /// just put line indicator number and spots indices you want to show it on top of them.
-  final List<ShowingTooltipIndicators> showingTooltipIndicators;
 
   /// Lerps a [BaseChartData] based on [t] value, check [Tween.lerp].
   @override
@@ -59,12 +53,9 @@ class LineChartData extends AxisChartData with EquatableMixin {
         backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t),
         borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
         clipData: b.clipData,
-        rangeAnnotations:
-            RangeAnnotations.lerp(a.rangeAnnotations, b.rangeAnnotations, t),
         lineBarsData:
             lerpLineChartBarDataList(a.lineBarsData, b.lineBarsData, t)!,
         lineTouchData: b.lineTouchData,
-        showingTooltipIndicators: b.showingTooltipIndicators,
       );
     } else {
       throw Exception('Illegal State');
@@ -75,12 +66,9 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// and replaces provided values.
   LineChartData copyWith({
     List<LineChartBarData>? lineBarsData,
-    List<BetweenBarsData>? betweenBarsData,
-    FlTitlesData? titlesData,
     RangeAnnotations? rangeAnnotations,
     ExtraLinesData? extraLinesData,
     LineTouchData? lineTouchData,
-    List<ShowingTooltipIndicators>? showingTooltipIndicators,
     FlGridData? gridData,
     FlBorderData? borderData,
     double? minX,
@@ -94,10 +82,7 @@ class LineChartData extends AxisChartData with EquatableMixin {
   }) {
     return LineChartData(
       lineBarsData: lineBarsData ?? this.lineBarsData,
-      rangeAnnotations: rangeAnnotations ?? this.rangeAnnotations,
       lineTouchData: lineTouchData ?? this.lineTouchData,
-      showingTooltipIndicators:
-          showingTooltipIndicators ?? this.showingTooltipIndicators,
       borderData: borderData ?? this.borderData,
       minX: minX ?? this.minX,
       maxX: maxX ?? this.maxX,
@@ -116,7 +101,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         lineBarsData,
         extraLinesData,
         lineTouchData,
-        showingTooltipIndicators,
         borderData,
         rangeAnnotations,
         minX,

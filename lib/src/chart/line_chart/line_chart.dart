@@ -68,7 +68,6 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
     }
 
     return lineChartData.copyWith(
-      showingTooltipIndicators: _showingTouchedTooltips,
       lineBarsData: lineChartData.lineBarsData.map((barData) {
         final index = lineChartData.lineBarsData.indexOf(barData);
         return barData.copyWith(

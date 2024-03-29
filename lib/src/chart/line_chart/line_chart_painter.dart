@@ -135,32 +135,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       canvasWrapper.restore();
     }
 
-    // Draw touch tooltip on most top spot
-    for (var i = 0; i < data.showingTooltipIndicators.length; i++) {
-      var tooltipSpots = data.showingTooltipIndicators[i];
 
-      final showingBarSpots = tooltipSpots.showingSpots;
-      if (showingBarSpots.isEmpty) {
-        continue;
-      }
-      final barSpots = List<LineBarSpot>.of(showingBarSpots);
-      FlSpot topSpot = barSpots[0];
-      for (final barSpot in barSpots) {
-        if (barSpot.y > topSpot.y) {
-          topSpot = barSpot;
-        }
-      }
-      tooltipSpots = ShowingTooltipIndicators(barSpots);
-
-      drawTouchTooltip(
-        context,
-        canvasWrapper,
-        data.lineTouchData.touchTooltipData,
-        topSpot,
-        tooltipSpots,
-        holder,
-      );
-    }
   }
 
   @visibleForTesting
