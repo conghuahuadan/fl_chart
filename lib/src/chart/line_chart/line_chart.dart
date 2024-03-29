@@ -37,9 +37,6 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
   /// it lerps between the old [LineChartData] to the new one.
   LineChartDataTween? _lineChartDataTween;
 
-
-  final List<ShowingTooltipIndicators> _showingTouchedTooltips = [];
-
   final Map<int, List<int>> _showingTouchedIndicators = {};
 
   final _lineChartHelper = LineChartHelper();

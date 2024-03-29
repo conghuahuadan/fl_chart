@@ -744,38 +744,6 @@ typedef CalculateTouchDistance = double Function(
   Offset spotPixelCoordinates,
 );
 
-/// Default distanceCalculator only considers distance on x axis
-double _xDistance(Offset touchPoint, Offset spotPixelCoordinates) {
-  return (touchPoint.dx - spotPixelCoordinates.dx).abs();
-}
-
-/// Default presentation of touched indicators.
-List<TouchedSpotIndicatorData> defaultTouchedIndicators(
-  LineChartBarData barData,
-  List<int> indicators,
-) {
-  return indicators.map((int index) {
-    /// Indicator Line
-    var lineColor = barData.gradient?.colors.first ?? barData.color;
-    if (barData.dotData.show) {
-      lineColor = _defaultGetDotColor(barData.spots[index], 0, barData);
-    }
-    const lineStrokeWidth = 4.0;
-    final flLine = FlLine(color: lineColor, strokeWidth: lineStrokeWidth);
-
-    var dotSize = 10.0;
-    if (barData.dotData.show) {
-      dotSize = 4.0 * 1.8;
-    }
-
-    final dotData = FlDotData(
-      getDotPainter: (spot, percent, bar, index) =>
-          _defaultGetDotPainter(spot, percent, bar, index, size: dotSize),
-    );
-
-    return TouchedSpotIndicatorData(flLine, dotData);
-  }).toList();
-}
 
 /// By default line starts from the bottom of the chart.
 double defaultGetTouchLineStart(LineChartBarData barData, int spotIndex) {
@@ -785,96 +753,6 @@ double defaultGetTouchLineStart(LineChartBarData barData, int spotIndex) {
 /// By default line ends at the touched point.
 double defaultGetTouchLineEnd(LineChartBarData barData, int spotIndex) {
   return barData.spots[spotIndex].y;
-}
-
-/// Holds representation data for showing tooltip popup on top of spots.
-class LineTouchTooltipData with EquatableMixin {
-  /// if [LineTouchData.handleBuiltInTouches] is true,
-  /// [LineChart] shows a tooltip popup on top of spots automatically when touch happens,
-  /// otherwise you can show it manually using [LineChartData.showingTooltipIndicators].
-  /// Tooltip shows on top of spots, with [tooltipBgColor] as a background color,
-  /// and you can set corner radius using [tooltipRoundedRadius].
-  /// If you want to have a padding inside the tooltip, fill [tooltipPadding],
-  /// or If you want to have a bottom margin, set [tooltipMargin].
-  /// Content of the tooltip will provide using [getTooltipItems] callback, you can override it
-  /// and pass your custom data to show in the tooltip.
-  /// You can restrict the tooltip's width using [maxContentWidth].
-  /// Sometimes, [LineChart] shows the tooltip outside of the chart,
-  /// you can set [fitInsideHorizontally] true to force it to shift inside the chart horizontally,
-  /// also you can set [fitInsideVertically] true to force it to shift inside the chart vertically.
-  const LineTouchTooltipData({
-    this.tooltipBgColor = const Color.fromRGBO(96, 125, 139, 1),
-    this.tooltipRoundedRadius = 4,
-    this.tooltipPadding =
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    this.tooltipMargin = 16,
-    this.tooltipHorizontalAlignment = FLHorizontalAlignment.center,
-    this.tooltipHorizontalOffset = 0,
-    this.maxContentWidth = 120,
-    this.getTooltipItems = defaultLineTooltipItem,
-    this.fitInsideHorizontally = false,
-    this.fitInsideVertically = false,
-    this.showOnTopOfTheChartBoxArea = false,
-    this.rotateAngle = 0.0,
-    this.tooltipBorder = BorderSide.none,
-  });
-
-  /// The tooltip background color.
-  final Color tooltipBgColor;
-
-  /// Sets a rounded radius for the tooltip.
-  final double tooltipRoundedRadius;
-
-  /// Applies a padding for showing contents inside the tooltip.
-  final EdgeInsets tooltipPadding;
-
-  /// Applies a bottom margin for showing tooltip on top of rods.
-  final double tooltipMargin;
-
-  /// Controls showing tooltip on left side, right side or center aligned with spot, default is center
-  final FLHorizontalAlignment tooltipHorizontalAlignment;
-
-  /// Applies horizontal offset for showing tooltip, default is zero.
-  final double tooltipHorizontalOffset;
-
-  /// Restricts the tooltip's width.
-  final double maxContentWidth;
-
-  /// Retrieves data for showing content inside the tooltip.
-  final GetLineTooltipItems getTooltipItems;
-
-  /// Forces the tooltip to shift horizontally inside the chart, if overflow happens.
-  final bool fitInsideHorizontally;
-
-  /// Forces the tooltip to shift vertically inside the chart, if overflow happens.
-  final bool fitInsideVertically;
-
-  /// Forces the tooltip container to top of the line, default 'false'
-  final bool showOnTopOfTheChartBoxArea;
-
-  /// Controls the rotation of the tooltip.
-  final double rotateAngle;
-
-  /// The tooltip border color.
-  final BorderSide tooltipBorder;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        tooltipBgColor,
-        tooltipRoundedRadius,
-        tooltipPadding,
-        tooltipMargin,
-        tooltipHorizontalAlignment,
-        tooltipHorizontalOffset,
-        maxContentWidth,
-        getTooltipItems,
-        fitInsideHorizontally,
-        fitInsideVertically,
-        showOnTopOfTheChartBoxArea,
-        rotateAngle,
-        tooltipBorder,
-      ];
 }
 
 /// Provides a [LineTooltipItem] for showing content inside the [LineTouchTooltipData].
@@ -935,18 +813,6 @@ class LineBarSpot extends FlSpot with EquatableMixin {
       ];
 }
 
-/// A [LineBarSpot] that holds information about the event that selected it
-class TouchLineBarSpot extends LineBarSpot {
-  TouchLineBarSpot(
-    super.bar,
-    super.barIndex,
-    super.spot,
-    this.distance,
-  );
-
-  /// Distance in pixels from where the user taped
-  final double distance;
-}
 
 /// Holds data of showing each row item in the tooltip popup.
 class LineTooltipItem with EquatableMixin {
