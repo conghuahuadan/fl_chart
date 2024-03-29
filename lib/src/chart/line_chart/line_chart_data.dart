@@ -617,51 +617,6 @@ bool showAllDots(FlSpot spot, LineChartBarData barData) {
   return true;
 }
 
-/// Shows a text label
-abstract class FlLineLabel with EquatableMixin {
-  /// Draws a title on the line, align it with [alignment] over the line,
-  /// applies [padding] for spaces, and applies [style] for changing color,
-  /// size, ... of the text.
-  /// [show] determines showing label or not.
-  const FlLineLabel({
-    required this.show,
-    required this.padding,
-    required this.style,
-    required this.alignment,
-  });
-
-  /// Determines showing label or not.
-  final bool show;
-
-  /// Inner spaces around the drawing text.
-  final EdgeInsetsGeometry padding;
-
-  /// Sets style of the drawing text.
-  final TextStyle? style;
-
-  /// Aligns the text on the line.
-  final Alignment alignment;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        show,
-        padding,
-        style,
-        alignment,
-      ];
-}
-
-/// Used for showing touch indicators (a thicker line and larger dot on the targeted spot).
-///
-/// It gives you the [spotIndexes] that touch happened, or manually targeted,
-/// in the given [barData], you should return a list of [TouchedSpotIndicatorData],
-/// length of this list should be equal to the [spotIndexes.length],
-/// each [TouchedSpotIndicatorData] determines the look of showing indicator.
-typedef GetTouchedSpotIndicator = List<TouchedSpotIndicatorData?> Function(
-  LineChartBarData barData,
-  List<int> spotIndexes,
-);
 
 /// Used for determine the touch indicator line's starting/end point.
 typedef GetTouchLineY = double Function(
@@ -783,54 +738,4 @@ class LineTooltipItem with EquatableMixin {
       ];
 }
 
-/// details of showing indicator when touch happened on [LineChart]
-/// [indicatorBelowLine] we draw a vertical line below of the touched spot
-/// [touchedSpotDotData] we draw a larger dot on the touched spot to bold it
-class TouchedSpotIndicatorData with EquatableMixin {
-  /// if [LineTouchData.handleBuiltInTouches] is true,
-  /// [LineChart] shows a thicker line and larger spot as indicator automatically when touch happens,
-  /// otherwise you can show it manually using [LineChartBarData.showingIndicators].
-  /// [indicatorBelowLine] determines line's style, and
-  /// [touchedSpotDotData] determines dot's style.
-  const TouchedSpotIndicatorData(
-    this.indicatorBelowLine,
-    this.touchedSpotDotData,
-  );
 
-  /// Determines line's style.
-  final FlLine indicatorBelowLine;
-
-  /// Determines dot's style.
-  final FlDotData touchedSpotDotData;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        indicatorBelowLine,
-        touchedSpotDotData,
-      ];
-}
-
-/// Holds data for showing tooltips over a line
-class ShowingTooltipIndicators with EquatableMixin {
-  /// [LineChart] shows some tooltips over each [LineChartBarData],
-  /// and [showingSpots] determines in which spots this tooltip should be shown.
-  const ShowingTooltipIndicators(this.showingSpots);
-
-  /// Determines the spots that each tooltip should be shown.
-  final List<LineBarSpot> showingSpots;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [showingSpots];
-}
-
-
-/// It lerps a [LineChartData] to another [LineChartData] (handles animation for updating values)
-class LineChartDataTween extends Tween<LineChartData> {
-  LineChartDataTween({required super.begin, required super.end});
-
-  /// Lerps a [LineChartData] based on [t] value, check [Tween.lerp].
-  @override
-  LineChartData lerp(double t) => begin!.lerp(begin!, end!, t);
-}

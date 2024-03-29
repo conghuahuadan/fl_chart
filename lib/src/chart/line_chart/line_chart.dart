@@ -33,9 +33,6 @@ class LineChart extends ImplicitlyAnimatedWidget {
 }
 
 class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
-  /// we handle under the hood animations (implicit animations) via this tween,
-  /// it lerps between the old [LineChartData] to the new one.
-  LineChartDataTween? _lineChartDataTween;
 
   final Map<int, List<int>> _showingTouchedIndicators = {};
 
@@ -47,7 +44,7 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
     return AxisChartScaffoldWidget(
       chart: LineChartLeaf(
-        data: _withTouchedIndicators(_lineChartDataTween!.evaluate(animation)),
+        data: _withTouchedIndicators(showingData),
         targetData: _withTouchedIndicators(showingData),
         key: widget.chartRendererKey,
       ),
@@ -91,11 +88,6 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _lineChartDataTween = visitor(
-      _lineChartDataTween,
-      _getData(),
-      (dynamic value) =>
-          LineChartDataTween(begin: value as LineChartData, end: widget.data),
-    ) as LineChartDataTween?;
+
   }
 }
