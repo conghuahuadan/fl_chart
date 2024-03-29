@@ -342,52 +342,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
         ..drawPath(filledAboveBarPath, _clearBarAreaPaint)
         ..restore();
     }
-
-    /// draw below spots line
-    if (barData.belowBarData.spotsLine.show) {
-      for (final spot in barData.spots) {
-        if (barData.belowBarData.spotsLine.checkToShowSpotLine(spot)) {
-          final from = Offset(
-            getPixelX(spot.x, viewSize, holder),
-            getPixelY(spot.y, viewSize, holder),
-          );
-
-          Offset to;
-
-          // Check applyCutOffY
-          if (barData.belowBarData.spotsLine.applyCutOffY &&
-              barData.belowBarData.applyCutOffY) {
-            to = Offset(
-              getPixelX(spot.x, viewSize, holder),
-              getPixelY(barData.belowBarData.cutOffY, viewSize, holder),
-            );
-          } else {
-            to = Offset(
-              getPixelX(spot.x, viewSize, holder),
-              viewSize.height,
-            );
-          }
-
-          final lineStyle = barData.belowBarData.spotsLine.flLineStyle;
-          _barAreaLinesPaint
-            ..setColorOrGradientForLine(
-              lineStyle.color,
-              lineStyle.gradient,
-              from: from,
-              to: to,
-            )
-            ..strokeWidth = lineStyle.strokeWidth
-            ..transparentIfWidthIsZero();
-
-          canvasWrapper.drawDashedLine(
-            from,
-            to,
-            _barAreaLinesPaint,
-            lineStyle.dashArray,
-          );
-        }
-      }
-    }
   }
 
   /// draw the main bar line by the [barPath]

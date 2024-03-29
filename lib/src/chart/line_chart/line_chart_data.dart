@@ -15,10 +15,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
     super.borderData,
     double? minX,
     double? maxX,
-    super.baselineX,
     double? minY,
     double? maxY,
-    super.baselineY,
     super.clipData = const FlClipData.none(),
     super.backgroundColor,
   }) : super(
@@ -38,10 +36,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
       return LineChartData(
         minX: lerpDouble(a.minX, b.minX, t),
         maxX: lerpDouble(a.maxX, b.maxX, t),
-        baselineX: lerpDouble(a.baselineX, b.baselineX, t),
         minY: lerpDouble(a.minY, b.minY, t),
         maxY: lerpDouble(a.maxY, b.maxY, t),
-        baselineY: lerpDouble(a.baselineY, b.baselineY, t),
         backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t),
         borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
         clipData: b.clipData,
@@ -72,10 +68,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
       borderData: borderData ?? this.borderData,
       minX: minX ?? this.minX,
       maxX: maxX ?? this.maxX,
-      baselineX: baselineX ?? this.baselineX,
       minY: minY ?? this.minY,
       maxY: maxY ?? this.maxY,
-      baselineY: baselineY ?? this.baselineY,
       clipData: clipData ?? this.clipData,
       backgroundColor: backgroundColor ?? this.backgroundColor,
     );
@@ -88,10 +82,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
         borderData,
         minX,
         maxX,
-        baselineX,
         minY,
         maxY,
-        baselineY,
         clipData,
         backgroundColor,
       ];
@@ -401,7 +393,6 @@ class BarAreaData with EquatableMixin {
     this.show = false,
     Color? color,
     this.gradient,
-    this.spotsLine = const BarAreaSpotsLine(),
     this.cutOffY = 0,
     this.applyCutOffY = false,
   }) : color = color ??
@@ -421,9 +412,6 @@ class BarAreaData with EquatableMixin {
   /// It throws an exception if you provide both [color] and [gradient]
   final Gradient? gradient;
 
-  /// holds data for drawing a line from each spot the the bottom, or top of the chart
-  final BarAreaSpotsLine spotsLine;
-
   /// cut the drawing below or above area to this y value
   final double cutOffY;
 
@@ -434,7 +422,6 @@ class BarAreaData with EquatableMixin {
   static BarAreaData lerp(BarAreaData a, BarAreaData b, double t) {
     return BarAreaData(
       show: b.show,
-      spotsLine: BarAreaSpotsLine.lerp(a.spotsLine, b.spotsLine, t),
       color: Color.lerp(a.color, b.color, t),
       // ignore: invalid_use_of_protected_member
       gradient: Gradient.lerp(a.gradient, b.gradient, t),
@@ -449,7 +436,6 @@ class BarAreaData with EquatableMixin {
         show,
         color,
         gradient,
-        spotsLine,
         cutOffY,
         applyCutOffY,
       ];
@@ -503,53 +489,6 @@ class BetweenBarsData with EquatableMixin {
       ];
 }
 
-/// Holds data for drawing line on the spots under the [BarAreaData].
-class BarAreaSpotsLine with EquatableMixin {
-  /// If [show] is true, [LineChart] draws some lines on above or below the spots,
-  /// you can customize the appearance of the lines using [flLineStyle]
-  /// and you can decide to show or hide the lines on each spot using [checkToShowSpotLine].
-  const BarAreaSpotsLine({
-    this.show = false,
-    this.flLineStyle = const FlLine(),
-    this.checkToShowSpotLine = showAllSpotsBelowLine,
-    this.applyCutOffY = true,
-  });
-
-  /// Determines to show or hide all the lines.
-  final bool show;
-
-  /// Holds appearance of drawing line on the spots.
-  final FlLine flLineStyle;
-
-  /// Checks to show or hide lines on the spots.
-  final CheckToShowSpotLine checkToShowSpotLine;
-
-  /// Determines to inherit the cutOff properties from its parent [BarAreaData]
-  final bool applyCutOffY;
-
-  /// Lerps a [BarAreaSpotsLine] based on [t] value, check [Tween.lerp].
-  static BarAreaSpotsLine lerp(
-    BarAreaSpotsLine a,
-    BarAreaSpotsLine b,
-    double t,
-  ) {
-    return BarAreaSpotsLine(
-      show: b.show,
-      checkToShowSpotLine: b.checkToShowSpotLine,
-      flLineStyle: FlLine.lerp(a.flLineStyle, b.flLineStyle, t),
-      applyCutOffY: b.applyCutOffY,
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        show,
-        flLineStyle,
-        checkToShowSpotLine,
-        applyCutOffY,
-      ];
-}
 
 /// It used for determine showing or hiding [BarAreaSpotsLine]s
 ///
@@ -617,51 +556,6 @@ bool showAllDots(FlSpot spot, LineChartBarData barData) {
   return true;
 }
 
-/// Shows a text label
-abstract class FlLineLabel with EquatableMixin {
-  /// Draws a title on the line, align it with [alignment] over the line,
-  /// applies [padding] for spaces, and applies [style] for changing color,
-  /// size, ... of the text.
-  /// [show] determines showing label or not.
-  const FlLineLabel({
-    required this.show,
-    required this.padding,
-    required this.style,
-    required this.alignment,
-  });
-
-  /// Determines showing label or not.
-  final bool show;
-
-  /// Inner spaces around the drawing text.
-  final EdgeInsetsGeometry padding;
-
-  /// Sets style of the drawing text.
-  final TextStyle? style;
-
-  /// Aligns the text on the line.
-  final Alignment alignment;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        show,
-        padding,
-        style,
-        alignment,
-      ];
-}
-
-/// Used for showing touch indicators (a thicker line and larger dot on the targeted spot).
-///
-/// It gives you the [spotIndexes] that touch happened, or manually targeted,
-/// in the given [barData], you should return a list of [TouchedSpotIndicatorData],
-/// length of this list should be equal to the [spotIndexes.length],
-/// each [TouchedSpotIndicatorData] determines the look of showing indicator.
-typedef GetTouchedSpotIndicator = List<TouchedSpotIndicatorData?> Function(
-  LineChartBarData barData,
-  List<int> spotIndexes,
-);
 
 /// Used for determine the touch indicator line's starting/end point.
 typedef GetTouchLineY = double Function(
@@ -783,54 +677,4 @@ class LineTooltipItem with EquatableMixin {
       ];
 }
 
-/// details of showing indicator when touch happened on [LineChart]
-/// [indicatorBelowLine] we draw a vertical line below of the touched spot
-/// [touchedSpotDotData] we draw a larger dot on the touched spot to bold it
-class TouchedSpotIndicatorData with EquatableMixin {
-  /// if [LineTouchData.handleBuiltInTouches] is true,
-  /// [LineChart] shows a thicker line and larger spot as indicator automatically when touch happens,
-  /// otherwise you can show it manually using [LineChartBarData.showingIndicators].
-  /// [indicatorBelowLine] determines line's style, and
-  /// [touchedSpotDotData] determines dot's style.
-  const TouchedSpotIndicatorData(
-    this.indicatorBelowLine,
-    this.touchedSpotDotData,
-  );
 
-  /// Determines line's style.
-  final FlLine indicatorBelowLine;
-
-  /// Determines dot's style.
-  final FlDotData touchedSpotDotData;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        indicatorBelowLine,
-        touchedSpotDotData,
-      ];
-}
-
-/// Holds data for showing tooltips over a line
-class ShowingTooltipIndicators with EquatableMixin {
-  /// [LineChart] shows some tooltips over each [LineChartBarData],
-  /// and [showingSpots] determines in which spots this tooltip should be shown.
-  const ShowingTooltipIndicators(this.showingSpots);
-
-  /// Determines the spots that each tooltip should be shown.
-  final List<LineBarSpot> showingSpots;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [showingSpots];
-}
-
-
-/// It lerps a [LineChartData] to another [LineChartData] (handles animation for updating values)
-class LineChartDataTween extends Tween<LineChartData> {
-  LineChartDataTween({required super.begin, required super.end});
-
-  /// Lerps a [LineChartData] based on [t] value, check [Tween.lerp].
-  @override
-  LineChartData lerp(double t) => begin!.lerp(begin!, end!, t);
-}

@@ -17,25 +17,19 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
   AxisChartData({
     required this.minX,
     required this.maxX,
-    double? baselineX,
     required this.minY,
     required this.maxY,
-    double? baselineY,
     FlClipData? clipData,
     Color? backgroundColor,
     super.borderData,
   })  :
-        baselineX = baselineX ?? 0,
-        baselineY = baselineY ?? 0,
         clipData = clipData ?? const FlClipData.none(),
         backgroundColor = backgroundColor ?? Colors.transparent;
 
   double minX;
   double maxX;
-  double baselineX;
   double minY;
   double maxY;
-  double baselineY;
 
   /// clip the chart to the border (prevent draw outside the border)
   FlClipData clipData;
@@ -54,10 +48,8 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
   List<Object?> get props => [
         minX,
         maxX,
-        baselineX,
         minY,
         maxY,
-        baselineY,
         clipData,
         backgroundColor,
         borderData,
@@ -162,32 +154,6 @@ class FlLine with EquatableMixin {
   /// For example, the array `[5, 10]` would result in dashes 5 pixels long
   /// followed by blank spaces 10 pixels long.
   final List<int>? dashArray;
-
-  /// Lerps a [FlLine] based on [t] value, check [Tween.lerp].
-  static FlLine lerp(FlLine a, FlLine b, double t) {
-    return FlLine(
-      color: Color.lerp(a.color, b.color, t),
-      gradient: Gradient.lerp(a.gradient, b.gradient, t),
-      strokeWidth: lerpDouble(a.strokeWidth, b.strokeWidth, t)!,
-      dashArray: lerpIntList(a.dashArray, b.dashArray, t),
-    );
-  }
-
-  /// Copies current [FlLine] to a new [FlLine],
-  /// and replaces provided values.
-  FlLine copyWith({
-    Color? color,
-    Gradient? gradient,
-    double? strokeWidth,
-    List<int>? dashArray,
-  }) {
-    return FlLine(
-      color: color ?? this.color,
-      gradient: gradient ?? this.gradient,
-      strokeWidth: strokeWidth ?? this.strokeWidth,
-      dashArray: dashArray ?? this.dashArray,
-    );
-  }
 
   /// Used for equality check, see [EquatableMixin].
   @override
