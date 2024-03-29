@@ -36,21 +36,6 @@ int lerpInt(int a, int b, double t) => (a + (b - a) * t).round();
 List<FlSpot>? lerpFlSpotList(List<FlSpot>? a, List<FlSpot>? b, double t) =>
     lerpList(a, b, t, lerp: FlSpot.lerp);
 
-/// Lerps [HorizontalLine] list based on [t] value, check [Tween.lerp].
-List<HorizontalLine>? lerpHorizontalLineList(
-  List<HorizontalLine>? a,
-  List<HorizontalLine>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: HorizontalLine.lerp);
-
-/// Lerps [VerticalLine] list based on [t] value, check [Tween.lerp].
-List<VerticalLine>? lerpVerticalLineList(
-  List<VerticalLine>? a,
-  List<VerticalLine>? b,
-  double t,
-) =>
-    lerpList(a, b, t, lerp: VerticalLine.lerp);
 
 /// Lerps [HorizontalRangeAnnotation] list based on [t] value, check [Tween.lerp].
 List<HorizontalRangeAnnotation>? lerpHorizontalRangeAnnotationList(

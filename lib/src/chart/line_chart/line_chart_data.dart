@@ -59,8 +59,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   LineChartData copyWith({
     List<LineChartBarData>? lineBarsData,
     RangeAnnotations? rangeAnnotations,
-    ExtraLinesData? extraLinesData,
-    FlGridData? gridData,
     FlBorderData? borderData,
     double? minX,
     double? maxX,
@@ -89,7 +87,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   @override
   List<Object?> get props => [
         lineBarsData,
-        extraLinesData,
         borderData,
         rangeAnnotations,
         minX,
