@@ -23,7 +23,6 @@ List<T>? lerpList<T>(
   }
 }
 
-
 /// Lerps [int] list based on [t] value, check [Tween.lerp].
 List<int>? lerpIntList(List<int>? a, List<int>? b, double t) =>
     lerpList(a, b, t, lerp: lerpInt);
@@ -37,7 +36,6 @@ List<FlSpot>? lerpFlSpotList(List<FlSpot>? a, List<FlSpot>? b, double t) =>
     lerpList(a, b, t, lerp: FlSpot.lerp);
 
 
-
 /// Lerps [LineChartBarData] list based on [t] value, check [Tween.lerp].
 List<LineChartBarData>? lerpLineChartBarDataList(
   List<LineChartBarData>? a,
@@ -46,27 +44,3 @@ List<LineChartBarData>? lerpLineChartBarDataList(
 ) =>
     lerpList(a, b, t, lerp: LineChartBarData.lerp);
 
-/// Lerps between a [LinearGradient] colors, based on [t]
-Color lerpGradient(List<Color> colors, List<double> stops, double t) {
-  final length = colors.length;
-  if (stops.length != length) {
-    /// provided gradientColorStops is invalid and we calculate it here
-    stops = List.generate(length, (i) => (i + 1) / length);
-  }
-
-  for (var s = 0; s < stops.length - 1; s++) {
-    final leftStop = stops[s];
-    final rightStop = stops[s + 1];
-
-    final leftColor = colors[s];
-    final rightColor = colors[s + 1];
-
-    if (t <= leftStop) {
-      return leftColor;
-    } else if (t < rightStop) {
-      final sectionT = (t - leftStop) / (rightStop - leftStop);
-      return Color.lerp(leftColor, rightColor, sectionT)!;
-    }
-  }
-  return colors.last;
-}
