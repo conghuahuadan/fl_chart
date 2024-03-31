@@ -34,55 +34,21 @@ class LineChart extends ImplicitlyAnimatedWidget {
 
 class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
-  final Map<int, List<int>> _showingTouchedIndicators = {};
-
-  final _lineChartHelper = LineChartHelper();
-
   @override
   Widget build(BuildContext context) {
     final showingData = _getData();
 
     return AxisChartScaffoldWidget(
       chart: LineChartLeaf(
-        data: _withTouchedIndicators(showingData),
-        targetData: _withTouchedIndicators(showingData),
+        data: showingData,
         key: widget.chartRendererKey,
       ),
       data: showingData,
     );
   }
 
-  LineChartData _withTouchedIndicators(LineChartData lineChartData) {
-
-    return lineChartData.copyWith(
-      lineBarsData: lineChartData.lineBarsData.map((barData) {
-        final index = lineChartData.lineBarsData.indexOf(barData);
-        return barData.copyWith(
-          showingIndicators: _showingTouchedIndicators[index] ?? [],
-        );
-      }).toList(),
-    );
-  }
-
   LineChartData _getData() {
     var newData = widget.data;
-
-    /// Calculate minX, maxX, minY, maxY for [LineChartData] if they are null,
-    /// it is necessary to render the chart correctly.
-    if (newData.minX.isNaN ||
-        newData.maxX.isNaN ||
-        newData.minY.isNaN ||
-        newData.maxY.isNaN) {
-      final values = _lineChartHelper.calculateMaxAxisValues(
-        newData.lineBarsData,
-      );
-      newData = newData.copyWith(
-        minX: newData.minX.isNaN ? values.minX : newData.minX,
-        maxX: newData.maxX.isNaN ? values.maxX : newData.maxX,
-        minY: newData.minY.isNaN ? values.minY : newData.minY,
-        maxY: newData.maxY.isNaN ? values.maxY : newData.maxY,
-      );
-    }
     return newData;
   }
 

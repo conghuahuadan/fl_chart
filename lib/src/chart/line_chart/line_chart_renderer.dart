@@ -13,26 +13,20 @@ class LineChartLeaf extends LeafRenderObjectWidget {
   const LineChartLeaf({
     super.key,
     required this.data,
-    required this.targetData,
   });
 
   final LineChartData data;
-  final LineChartData targetData;
 
   @override
   RenderLineChart createRenderObject(BuildContext context) => RenderLineChart(
         context,
         data,
-        targetData,
-        MediaQuery.of(context).textScaler,
       );
 
   @override
   void updateRenderObject(BuildContext context, RenderLineChart renderObject) {
     renderObject
       ..data = data
-      ..targetData = targetData
-      ..textScaler = MediaQuery.of(context).textScaler
       ..buildContext = context;
   }
 }
@@ -43,11 +37,7 @@ class RenderLineChart extends RenderBaseChart {
   RenderLineChart(
     BuildContext context,
     LineChartData data,
-    LineChartData targetData,
-    TextScaler textScaler,
   )   : _data = data,
-        _targetData = targetData,
-        _textScaler = textScaler,
         super(
           context,
         );
@@ -60,21 +50,6 @@ class RenderLineChart extends RenderBaseChart {
     markNeedsPaint();
   }
 
-  LineChartData get targetData => _targetData;
-  LineChartData _targetData;
-  set targetData(LineChartData value) {
-    if (_targetData == value) return;
-    _targetData = value;
-    markNeedsPaint();
-  }
-
-  TextScaler get textScaler => _textScaler;
-  TextScaler _textScaler;
-  set textScaler(TextScaler value) {
-    if (_textScaler == value) return;
-    _textScaler = value;
-    markNeedsPaint();
-  }
 
   // We couldn't mock [size] property of this class, that's why we have this
   @visibleForTesting
@@ -84,7 +59,7 @@ class RenderLineChart extends RenderBaseChart {
   LineChartPainter painter = LineChartPainter();
 
   PaintHolder<LineChartData> get paintHolder =>
-      PaintHolder(data, targetData, textScaler);
+      PaintHolder(data);
 
   @override
   void paint(PaintingContext context, Offset offset) {

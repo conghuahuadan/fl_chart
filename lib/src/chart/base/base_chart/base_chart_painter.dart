@@ -19,14 +19,8 @@ class BaseChartPainter<D extends BaseChartData> {
 /// Holds data for painting on canvas
 class PaintHolder<Data extends BaseChartData> {
   /// Holds data for painting on canvas
-  const PaintHolder(this.data, this.targetData, this.textScaler);
+  const PaintHolder(this.data);
 
   /// [data] is what we need to show frame by frame (it might be changed by an animator)
   final Data data;
-
-  /// [targetData] is the target of animation that is playing.
-  final Data targetData;
-
-  /// system [TextScaler] used for scaling texts for better readability
-  final TextScaler textScaler;
 }

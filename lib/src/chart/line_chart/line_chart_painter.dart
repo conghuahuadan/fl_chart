@@ -5,7 +5,6 @@ import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_extensions.dart';
 import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_painter.dart';
 import 'package:fl_chart/src/chart/base/base_chart/base_chart_painter.dart';
 import 'package:fl_chart/src/extensions/paint_extension.dart';
-import 'package:fl_chart/src/extensions/path_extension.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +30,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       ..color = const Color(0x00000000)
       ..blendMode = BlendMode.dstIn;
   }
+
   late Paint _barPaint;
   late Paint _barAreaPaint;
   late Paint _barAreaLinesPaint;
@@ -58,9 +58,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       }
 
       drawBarLine(canvasWrapper, barData, holder);
-
     }
-
   }
 
   @visibleForTesting
@@ -377,9 +375,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       ..strokeWidth = barData.barWidth
       ..transparentIfWidthIsZero();
 
-    barPath = barPath.toDashedPath(barData.dashArray);
     canvasWrapper.drawPath(barPath, _barPaint);
   }
-
-
 }
