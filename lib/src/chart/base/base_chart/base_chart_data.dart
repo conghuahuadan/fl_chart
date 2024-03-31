@@ -21,9 +21,6 @@ abstract class BaseChartData with EquatableMixin {
   /// Holds data to drawing border around the chart.
   FlBorderData borderData;
 
-
-  BaseChartData lerp(BaseChartData a, BaseChartData b, double t);
-
   /// Used for equality check, see [EquatableMixin].
   @override
   List<Object?> get props => [

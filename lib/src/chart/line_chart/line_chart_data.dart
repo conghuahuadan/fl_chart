@@ -27,24 +27,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// [LineChart] draws some lines in various shapes and overlaps them.
   final List<LineChartBarData> lineBarsData;
 
-  /// Lerps a [BaseChartData] based on [t] value, check [Tween.lerp].
-  @override
-  LineChartData lerp(BaseChartData a, BaseChartData b, double t) {
-    if (a is LineChartData && b is LineChartData) {
-      return LineChartData(
-        minX: lerpDouble(a.minX, b.minX, t),
-        maxX: lerpDouble(a.maxX, b.maxX, t),
-        minY: lerpDouble(a.minY, b.minY, t),
-        maxY: lerpDouble(a.maxY, b.maxY, t),
-        backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t),
-        borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
-        lineBarsData:
-            lerpLineChartBarDataList(a.lineBarsData, b.lineBarsData, t)!,
-      );
-    } else {
-      throw Exception('Illegal State');
-    }
-  }
 
   /// Copies current [LineChartData] to a new [LineChartData],
   /// and replaces provided values.
@@ -99,12 +81,9 @@ class LineChartBarData with EquatableMixin {
     this.isStrokeJoinRound = false,
     BarAreaData? belowBarData,
     BarAreaData? aboveBarData,
-    this.dotData = const FlDotData(),
-    this.showingIndicators = const [],
     this.dashArray,
     this.shadow = const Shadow(color: Colors.transparent),
     this.isStepLineChart = false,
-    this.lineChartStepData = const LineChartStepData(),
   })  : color =
             color ?? ((color == null && gradient == null) ? Colors.cyan : null),
         belowBarData = belowBarData ?? BarAreaData(),
@@ -209,12 +188,6 @@ class LineChartBarData with EquatableMixin {
   /// Fills the space above the line, using a color or gradient.
   final BarAreaData aboveBarData;
 
-  /// Responsible to showing [spots] on the line as a circular point.
-  final FlDotData dotData;
-
-  /// Show indicators based on provided indexes
-  final List<int> showingIndicators;
-
   /// Determines the dash length and space respectively, fill it if you want to have dashed line.
   final List<int>? dashArray;
 
@@ -223,9 +196,6 @@ class LineChartBarData with EquatableMixin {
 
   /// If sets true, it draws the chart in Step Line Chart style, using [LineChartBarData.lineChartStepData].
   final bool isStepLineChart;
-
-  /// Holds data for representing a Step Line Chart, and works only if [isStepChart] is true.
-  final LineChartStepData lineChartStepData;
 
   /// Lerps a [LineChartBarData] based on [t] value, check [Tween.lerp].
   static LineChartBarData lerp(
@@ -248,16 +218,10 @@ class LineChartBarData with EquatableMixin {
         b.preventCurveOvershootingThreshold,
         t,
       )!,
-      dotData: FlDotData.lerp(a.dotData, b.dotData, t),
-      dashArray: lerpIntList(a.dashArray, b.dashArray, t),
       color: Color.lerp(a.color, b.color, t),
       gradient: Gradient.lerp(a.gradient, b.gradient, t),
-      spots: lerpFlSpotList(a.spots, b.spots, t)!,
-      showingIndicators: b.showingIndicators,
       shadow: Shadow.lerp(a.shadow, b.shadow, t)!,
       isStepLineChart: b.isStepLineChart,
-      lineChartStepData:
-          LineChartStepData.lerp(a.lineChartStepData, b.lineChartStepData, t),
     );
   }
 
@@ -282,7 +246,6 @@ class LineChartBarData with EquatableMixin {
     List<int>? showingIndicators,
     Shadow? shadow,
     bool? isStepLineChart,
-    LineChartStepData? lineChartStepData,
   }) {
     return LineChartBarData(
       spots: spots ?? this.spots,
@@ -301,11 +264,8 @@ class LineChartBarData with EquatableMixin {
       belowBarData: belowBarData ?? this.belowBarData,
       aboveBarData: aboveBarData ?? this.aboveBarData,
       dashArray: dashArray ?? this.dashArray,
-      dotData: dotData ?? this.dotData,
-      showingIndicators: showingIndicators ?? this.showingIndicators,
       shadow: shadow ?? this.shadow,
       isStepLineChart: isStepLineChart ?? this.isStepLineChart,
-      lineChartStepData: lineChartStepData ?? this.lineChartStepData,
     );
   }
 
@@ -325,47 +285,13 @@ class LineChartBarData with EquatableMixin {
         isStrokeJoinRound,
         belowBarData,
         aboveBarData,
-        dotData,
-        showingIndicators,
         dashArray,
         shadow,
         isStepLineChart,
-        lineChartStepData,
       ];
 }
 
-/// Holds data for representing a Step Line Chart, and works only if [LineChartBarData.isStepChart] is true.
-class LineChartStepData with EquatableMixin {
-  /// Determines the [stepDirection] of each step;
-  const LineChartStepData({this.stepDirection = stepDirectionMiddle});
 
-  /// Go to the next spot directly, with the current point's y value.
-  static const stepDirectionForward = 0.0;
-
-  /// Go to the half with the current spot y, and with the next spot y for the rest.
-  static const stepDirectionMiddle = 0.5;
-
-  /// Go to the next spot y and direct line to the next spot.
-  static const stepDirectionBackward = 1.0;
-
-  /// Determines the direction of each step;
-  final double stepDirection;
-
-  /// Lerps a [LineChartStepData] based on [t] value, check [Tween.lerp].
-  static LineChartStepData lerp(
-    LineChartStepData a,
-    LineChartStepData b,
-    double t,
-  ) {
-    return LineChartStepData(
-      stepDirection: lerpDouble(a.stepDirection, b.stepDirection, t)!,
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [stepDirection];
-}
 
 /// Holds data for filling an area (above or below) of the line with a color or gradient.
 class BarAreaData with EquatableMixin {
@@ -435,65 +361,6 @@ class BarAreaData with EquatableMixin {
       ];
 }
 
-/// Holds data about filling below or above space of the bar line,
-class BetweenBarsData with EquatableMixin {
-  BetweenBarsData({
-    required this.fromIndex,
-    required this.toIndex,
-    Color? color,
-    this.gradient,
-  }) : color = color ??
-            ((color == null && gradient == null)
-                ? Colors.blueGrey.withOpacity(0.5)
-                : null);
-
-  /// The index of the lineBarsData from where the area has to be rendered
-  final int fromIndex;
-
-  /// The index of the lineBarsData until where the area has to be rendered
-  final int toIndex;
-
-  /// If provided, this [BetweenBarsData] draws with this [color]
-  /// Otherwise we use  [gradient] to draw the background.
-  /// It throws an exception if you provide both [color] and [gradient]
-  final Color? color;
-
-  /// If provided, this [BetweenBarsData] draws with this [gradient].
-  /// Otherwise we use [color] to draw the background.
-  /// It throws an exception if you provide both [color] and [gradient]
-  final Gradient? gradient;
-
-  /// Lerps a [BetweenBarsData] based on [t] value, check [Tween.lerp].
-  static BetweenBarsData lerp(BetweenBarsData a, BetweenBarsData b, double t) {
-    return BetweenBarsData(
-      fromIndex: b.fromIndex,
-      toIndex: b.toIndex,
-      color: Color.lerp(a.color, b.color, t),
-      gradient: Gradient.lerp(a.gradient, b.gradient, t),
-    );
-  }
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        fromIndex,
-        toIndex,
-        color,
-        gradient,
-      ];
-}
-
-
-/// It used for determine showing or hiding [BarAreaSpotsLine]s
-///
-/// Gives you the checking spot, and you have to decide to
-/// show or not show the line on the provided spot.
-typedef CheckToShowSpotLine = bool Function(FlSpot spot);
-
-/// Shows all spot lines.
-bool showAllSpotsBelowLine(FlSpot spot) {
-  return true;
-}
 
 /// This class holds data about drawing spot dots on the drawing bar line.
 class FlDotData with EquatableMixin {
@@ -522,11 +389,6 @@ class FlDotData with EquatableMixin {
 }
 
 
-/// Shows all dots on spots.
-bool showAllDots(FlSpot spot, LineChartBarData barData) {
-  return true;
-}
-
 /// Represent a targeted spot inside a line bar.
 class LineBarSpot extends FlSpot with EquatableMixin {
   /// [bar] is the [LineChartBarData] that this spot is inside of,
@@ -537,7 +399,7 @@ class LineBarSpot extends FlSpot with EquatableMixin {
     this.bar,
     this.barIndex,
     FlSpot spot,
-  )   : spotIndex = bar.spots.indexOf(spot),
+  )   :
         super(spot.x, spot.y);
 
   /// Is the [LineChartBarData] that this spot is inside of.
@@ -546,15 +408,12 @@ class LineBarSpot extends FlSpot with EquatableMixin {
   /// Is the index of our [bar], in the [LineChartData.lineBarsData] list,
   final int barIndex;
 
-  /// Is the index of our [super.spot], in the [LineChartBarData.spots] list.
-  final int spotIndex;
 
   /// Used for equality check, see [EquatableMixin].
   @override
   List<Object?> get props => [
         bar,
         barIndex,
-        spotIndex,
         x,
         y,
       ];

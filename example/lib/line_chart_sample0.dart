@@ -102,9 +102,6 @@ class _LineChartSample0State extends State<LineChartSample0> {
           ),
           barWidth: 2,
           isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
