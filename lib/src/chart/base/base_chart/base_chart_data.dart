@@ -51,18 +51,6 @@ class FlBorderData with EquatableMixin {
     );
   }
 
-  /// Copies current [FlBorderData] to a new [FlBorderData],
-  /// and replaces provided values.
-  FlBorderData copyWith({
-    bool? show,
-    Border? border,
-  }) {
-    return FlBorderData(
-      show: show ?? this.show,
-      border: border ?? this.border,
-    );
-  }
-
   /// Used for equality check, see [EquatableMixin].
   @override
   List<Object?> get props => [

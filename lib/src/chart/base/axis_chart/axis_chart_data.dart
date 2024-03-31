@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_painter.dart';
-import 'package:fl_chart/src/utils/lerp.dart';
 import 'package:flutter/material.dart' hide Image;
 
 /// This is the base class for axis base charts data
@@ -64,17 +63,6 @@ class FlSpot with EquatableMixin {
   final double x;
   final double y;
 
-  /// Copies current [FlSpot] to a new [FlSpot],
-  /// and replaces provided values.
-  FlSpot copyWith({
-    double? x,
-    double? y,
-  }) {
-    return FlSpot(
-      x ?? this.x,
-      y ?? this.y,
-    );
-  }
 
   ///Prints x and y coordinates of FlSpot list
   @override
@@ -98,22 +86,6 @@ class FlSpot with EquatableMixin {
         x,
         y,
       ];
-
-  /// Lerps a [FlSpot] based on [t] value, check [Tween.lerp].
-  static FlSpot lerp(FlSpot a, FlSpot b, double t) {
-    if (a == FlSpot.nullSpot) {
-      return b;
-    }
-
-    if (b == FlSpot.nullSpot) {
-      return a;
-    }
-
-    return FlSpot(
-      lerpDouble(a.x, b.x, t)!,
-      lerpDouble(a.y, b.y, t)!,
-    );
-  }
 }
 
 

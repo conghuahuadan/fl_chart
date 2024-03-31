@@ -173,22 +173,8 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       /// if the isCurved is false, we set 0 for smoothness,
       /// it means we should not have any smoothness then we face with
       /// the sharped corners line
-      final smoothness = barData.isCurved ? barData.curveSmoothness : 0.0;
+      final smoothness = 0.0;
       temp = ((next - previous) / 2) * smoothness;
-
-      if (barData.preventCurveOverShooting) {
-        if ((next - current).dy <= barData.preventCurveOvershootingThreshold ||
-            (current - previous).dy <=
-                barData.preventCurveOvershootingThreshold) {
-          temp = Offset(temp.dx, 0);
-        }
-
-        if ((next - current).dx <= barData.preventCurveOvershootingThreshold ||
-            (current - previous).dx <=
-                barData.preventCurveOvershootingThreshold) {
-          temp = Offset(0, temp.dy);
-        }
-      }
 
       final controlPoint2 = current - temp;
 
@@ -267,20 +253,14 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     /// Line To Top Right
     var x = getPixelX(barSpots[barSpots.length - 1].x, viewSize, holder);
     double y;
-    if (!fillCompletely && barData.aboveBarData.applyCutOffY) {
-      y = getPixelY(barData.aboveBarData.cutOffY, viewSize, holder);
-    } else {
-      y = 0.0;
-    }
+    y = 0.0;
+
     aboveBarPath.lineTo(x, y);
 
     /// Line To Top Left
     x = getPixelX(barSpots[0].x, viewSize, holder);
-    if (!fillCompletely && barData.aboveBarData.applyCutOffY) {
-      y = getPixelY(barData.aboveBarData.cutOffY, viewSize, holder);
-    } else {
-      y = 0.0;
-    }
+    y = 0.0;
+
     aboveBarPath.lineTo(x, y);
 
     /// Line To Bottom Left
@@ -357,7 +337,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     _barPaint
       ..strokeCap = barData.isStrokeCapRound ? StrokeCap.round : StrokeCap.butt
       ..strokeJoin =
-          barData.isStrokeJoinRound ? StrokeJoin.round : StrokeJoin.miter;
+          StrokeJoin.round;
 
     final rectAroundTheLine = Rect.fromLTRB(
       getPixelX(barData.mostLeftSpot.x, viewSize, holder),
