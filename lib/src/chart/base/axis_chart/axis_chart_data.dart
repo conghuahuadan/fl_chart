@@ -19,20 +19,15 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
     required this.maxX,
     required this.minY,
     required this.maxY,
-    FlClipData? clipData,
     Color? backgroundColor,
     super.borderData,
   })  :
-        clipData = clipData ?? const FlClipData.none(),
         backgroundColor = backgroundColor ?? Colors.transparent;
 
   double minX;
   double maxX;
   double minY;
   double maxY;
-
-  /// clip the chart to the border (prevent draw outside the border)
-  FlClipData clipData;
 
   /// A background color which is drawn behind the chart.
   Color backgroundColor;
@@ -50,7 +45,6 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
         maxX,
         minY,
         maxY,
-        clipData,
         backgroundColor,
         borderData,
       ];
@@ -120,49 +114,6 @@ class FlSpot with EquatableMixin {
       lerpDouble(a.y, b.y, t)!,
     );
   }
-}
-
-
-/// Defines style of a line.
-class FlLine with EquatableMixin {
-  /// Renders a line, color it by [color],
-  /// thickness is defined by [strokeWidth],
-  /// and if you want to have dashed line, you should fill [dashArray],
-  /// it is a circular array of dash offsets and lengths.
-  /// For example, the array `[5, 10]` would result in dashes 5 pixels long
-  /// followed by blank spaces 10 pixels long.
-  const FlLine({
-    Color? color,
-    this.gradient,
-    this.strokeWidth = 2,
-    this.dashArray,
-  }) : color = color ??
-            ((color == null && gradient == null) ? Colors.black : null);
-
-  /// Defines color of the line.
-  final Color? color;
-
-  /// Defines the gradient of the line.
-  final Gradient? gradient;
-
-  /// Defines thickness of the line.
-  final double strokeWidth;
-
-  /// Defines dash effect of the line.
-  ///
-  /// it is a circular array of dash offsets and lengths.
-  /// For example, the array `[5, 10]` would result in dashes 5 pixels long
-  /// followed by blank spaces 10 pixels long.
-  final List<int>? dashArray;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        color,
-        gradient,
-        strokeWidth,
-        dashArray,
-      ];
 }
 
 

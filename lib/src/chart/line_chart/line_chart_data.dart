@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/extensions/color_extension.dart';
 import 'package:fl_chart/src/utils/lerp.dart';
 import 'package:flutter/material.dart' hide Image;
 
@@ -17,7 +16,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
     double? maxX,
     double? minY,
     double? maxY,
-    super.clipData = const FlClipData.none(),
     super.backgroundColor,
   }) : super(
           minX: minX ?? double.nan,
@@ -40,7 +38,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         maxY: lerpDouble(a.maxY, b.maxY, t),
         backgroundColor: Color.lerp(a.backgroundColor, b.backgroundColor, t),
         borderData: FlBorderData.lerp(a.borderData, b.borderData, t),
-        clipData: b.clipData,
         lineBarsData:
             lerpLineChartBarDataList(a.lineBarsData, b.lineBarsData, t)!,
       );
@@ -60,7 +57,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
     double? minY,
     double? maxY,
     double? baselineY,
-    FlClipData? clipData,
     Color? backgroundColor,
   }) {
     return LineChartData(
@@ -70,7 +66,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
       maxX: maxX ?? this.maxX,
       minY: minY ?? this.minY,
       maxY: maxY ?? this.maxY,
-      clipData: clipData ?? this.clipData,
       backgroundColor: backgroundColor ?? this.backgroundColor,
     );
   }
@@ -84,7 +79,6 @@ class LineChartData extends AxisChartData with EquatableMixin {
         maxX,
         minY,
         maxY,
-        clipData,
         backgroundColor,
       ];
 }
@@ -501,17 +495,6 @@ bool showAllSpotsBelowLine(FlSpot spot) {
   return true;
 }
 
-/// The callback passed to get the color of a [FlSpot]
-///
-/// The callback receives [FlSpot], which is the target spot,
-/// [double] is the percentage of spot along the bar line,
-/// [LineChartBarData] is the chart's bar.
-/// It should return a [Color] that needs to be used for drawing target.
-typedef GetDotColorCallback = Color Function(FlSpot, double, LineChartBarData);
-
-
-
-
 /// This class holds data about drawing spot dots on the drawing bar line.
 class FlDotData with EquatableMixin {
   /// set [show] false to prevent dots from drawing,
@@ -519,21 +502,15 @@ class FlDotData with EquatableMixin {
   /// override [checkToShowDot] to handle it in your way.
   const FlDotData({
     this.show = true,
-    this.checkToShowDot = showAllDots,
   });
 
   /// Determines show or hide all dots.
   final bool show;
 
-  /// Checks to show or hide an individual dot.
-  final CheckToShowDot checkToShowDot;
-
-
   /// Lerps a [FlDotData] based on [t] value, check [Tween.lerp].
   static FlDotData lerp(FlDotData a, FlDotData b, double t) {
     return FlDotData(
       show: b.show,
-      checkToShowDot: b.checkToShowDot,
     );
   }
 
@@ -541,68 +518,13 @@ class FlDotData with EquatableMixin {
   @override
   List<Object?> get props => [
         show,
-        checkToShowDot,
       ];
 }
 
-/// It determines showing or hiding [FlDotData] on the spots.
-///
-/// It gives you the checking [FlSpot] and you should decide to
-/// show or hide the dot on this spot by returning true or false.
-typedef CheckToShowDot = bool Function(FlSpot spot, LineChartBarData barData);
 
 /// Shows all dots on spots.
 bool showAllDots(FlSpot spot, LineChartBarData barData) {
   return true;
-}
-
-
-/// Used for determine the touch indicator line's starting/end point.
-typedef GetTouchLineY = double Function(
-  LineChartBarData barData,
-  int spotIndex,
-);
-
-/// Used to calculate the distance between coordinates of a touch event and a spot
-typedef CalculateTouchDistance = double Function(
-  Offset touchPoint,
-  Offset spotPixelCoordinates,
-);
-
-
-/// By default line starts from the bottom of the chart.
-double defaultGetTouchLineStart(LineChartBarData barData, int spotIndex) {
-  return -double.infinity;
-}
-
-/// By default line ends at the touched point.
-double defaultGetTouchLineEnd(LineChartBarData barData, int spotIndex) {
-  return barData.spots[spotIndex].y;
-}
-
-/// Provides a [LineTooltipItem] for showing content inside the [LineTouchTooltipData].
-///
-/// You can override [LineTouchTooltipData.getTooltipItems], it gives you
-/// [touchedSpots] list that touch happened on,
-/// then you should and pass your custom [LineTooltipItem] list
-/// (length should be equal to the [touchedSpots.length]),
-/// to show inside the tooltip popup.
-typedef GetLineTooltipItems = List<LineTooltipItem?> Function(
-  List<LineBarSpot> touchedSpots,
-);
-
-/// Default implementation for [LineTouchTooltipData.getTooltipItems].
-List<LineTooltipItem> defaultLineTooltipItem(List<LineBarSpot> touchedSpots) {
-  return touchedSpots.map((LineBarSpot touchedSpot) {
-    final textStyle = TextStyle(
-      color: touchedSpot.bar.gradient?.colors.first ??
-          touchedSpot.bar.color ??
-          Colors.blueGrey,
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
-    return LineTooltipItem(touchedSpot.y.toString(), textStyle);
-  }).toList();
 }
 
 /// Represent a targeted spot inside a line bar.
@@ -639,42 +561,5 @@ class LineBarSpot extends FlSpot with EquatableMixin {
 }
 
 
-/// Holds data of showing each row item in the tooltip popup.
-class LineTooltipItem with EquatableMixin {
-  /// Shows a [text] with [textStyle], [textDirection],
-  /// and optional [children] as a row in the tooltip popup.
-  const LineTooltipItem(
-    this.text,
-    this.textStyle, {
-    this.textAlign = TextAlign.center,
-    this.textDirection = TextDirection.ltr,
-    this.children,
-  });
-
-  /// Showing text.
-  final String text;
-
-  /// Style of showing text.
-  final TextStyle textStyle;
-
-  /// Align of showing text.
-  final TextAlign textAlign;
-
-  /// Direction of showing text.
-  final TextDirection textDirection;
-
-  /// List<TextSpan> add further style and format to the text of the tooltip
-  final List<TextSpan>? children;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        text,
-        textStyle,
-        textAlign,
-        textDirection,
-        children,
-      ];
-}
 
 
