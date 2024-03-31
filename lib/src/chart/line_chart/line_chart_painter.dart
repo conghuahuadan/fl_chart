@@ -9,7 +9,7 @@ import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/material.dart';
 
 /// Paints [LineChartData] in the canvas, it can be used in a [CustomPainter]
-class LineChartPainter extends AxisChartPainter<LineChartData> {
+class LineChartPainter extends AxisChartPainter {
   /// Paints [dataList] into canvas, it is the animating [LineChartData],
   /// [targetData] is the animation's target and remains the same
   /// during animation, then we should use it  when we need to show
@@ -23,8 +23,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
 
     _barAreaPaint = Paint()..style = PaintingStyle.fill;
 
-    _barAreaLinesPaint = Paint()..style = PaintingStyle.stroke;
-
     _clearBarAreaPaint = Paint()
       ..style = PaintingStyle.fill
       ..color = const Color(0x00000000)
@@ -33,11 +31,9 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
 
   late Paint _barPaint;
   late Paint _barAreaPaint;
-  late Paint _barAreaLinesPaint;
   late Paint _clearBarAreaPaint;
 
   /// Paints [LineChartData] into the provided canvas.
-  @override
   void paint(
     BuildContext context,
     CanvasWrapper canvasWrapper,

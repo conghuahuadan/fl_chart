@@ -1,11 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_scaffold_widget.dart';
 import 'package:fl_chart/src/chart/line_chart/line_chart_renderer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// Renders a line chart as a widget, using provided [LineChartData].
-class LineChart extends ImplicitlyAnimatedWidget {
+class LineChart extends StatefulWidget {
   /// [data] determines how the [LineChart] should be look like,
   /// when you make any change in the [LineChartData], it updates
   /// new values with animation, and duration is [swapAnimationDuration].
@@ -15,8 +14,6 @@ class LineChart extends ImplicitlyAnimatedWidget {
     this.data, {
     this.chartRendererKey,
     super.key,
-    super.duration = const Duration(milliseconds: 150),
-    super.curve = Curves.linear,
   });
 
   /// Determines how the [LineChart] should be look like.
@@ -31,18 +28,18 @@ class LineChart extends ImplicitlyAnimatedWidget {
   _LineChartState createState() => _LineChartState();
 }
 
-class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
-
+class _LineChartState extends State<LineChart> {
   @override
   Widget build(BuildContext context) {
     final showingData = _getData();
-
-    return AxisChartScaffoldWidget(
-      chart: LineChartLeaf(
-        data: showingData,
-        key: widget.chartRendererKey,
+    AxisChartData data = showingData;
+    return  Container(
+      decoration: BoxDecoration(
+        border: data.borderData.isVisible() ? data.borderData.border : null,
       ),
-      data: showingData,
+      child: LineChartLeaf(
+        data: showingData,
+      ),
     );
   }
 
@@ -52,7 +49,5 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
   }
 
   @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {
-
-  }
+  void forEachTween(TweenVisitor<dynamic> visitor) {}
 }

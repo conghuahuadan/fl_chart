@@ -3,18 +3,6 @@ import 'package:fl_chart/src/chart/base/base_chart/base_chart_data.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/material.dart';
 
-/// Base class of our painters.
-class BaseChartPainter<D extends BaseChartData> {
-  /// Draws some basic elements
-  const BaseChartPainter();
-
-  // Paints [BaseChartData] into the provided canvas.
-  void paint(
-    BuildContext context,
-    CanvasWrapper canvasWrapper,
-    PaintHolder<D> holder,
-  ) {}
-}
 
 /// Holds data for painting on canvas
 class PaintHolder<Data extends BaseChartData> {

@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/chart/base/base_chart/base_chart_painter.dart';
-import 'package:fl_chart/src/chart/base/base_chart/render_base_chart.dart';
 import 'package:fl_chart/src/chart/line_chart/line_chart_painter.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,29 +26,29 @@ class LineChartLeaf extends LeafRenderObjectWidget {
   void updateRenderObject(BuildContext context, RenderLineChart renderObject) {
     renderObject
       ..data = data
-      ..buildContext = context;
+      .._buildContext = context;
   }
 }
 // coverage:ignore-end
 
 /// Renders our LineChart, also handles hitTest.
-class RenderLineChart extends RenderBaseChart {
+class RenderLineChart extends RenderBox {
+  BuildContext _buildContext;
+
   RenderLineChart(
     BuildContext context,
     LineChartData data,
-  )   : _data = data,
-        super(
-          context,
-        );
+  )   : _buildContext = context,
+        _data = data;
 
   LineChartData get data => _data;
   LineChartData _data;
+
   set data(LineChartData value) {
     if (_data == value) return;
     _data = value;
     markNeedsPaint();
   }
-
 
   // We couldn't mock [size] property of this class, that's why we have this
   @visibleForTesting
@@ -58,8 +57,7 @@ class RenderLineChart extends RenderBaseChart {
   @visibleForTesting
   LineChartPainter painter = LineChartPainter();
 
-  PaintHolder<LineChartData> get paintHolder =>
-      PaintHolder(data);
+  PaintHolder<LineChartData> get paintHolder => PaintHolder(data);
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -67,10 +65,23 @@ class RenderLineChart extends RenderBaseChart {
       ..save()
       ..translate(offset.dx, offset.dy);
     painter.paint(
-      buildContext,
+      _buildContext,
       CanvasWrapper(canvas, mockTestSize ?? size),
       paintHolder,
     );
     canvas.restore();
   }
+
+  @override
+  void performLayout() {
+    size = computeDryLayout(constraints);
+  }
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return Size(constraints.maxWidth, constraints.maxHeight);
+  }
+
+  @override
+  bool hitTestSelf(Offset position) => true;
 }

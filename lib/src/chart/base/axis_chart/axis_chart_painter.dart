@@ -11,8 +11,7 @@ import 'package:flutter/material.dart';
 /// in child classes -> [BarChartPainter], [LineChartPainter]
 /// [dataList] is the currently showing data (it may produced by an animation using lerp function),
 /// [targetData] is the target data, that animation is going to show (if animating)
-abstract class AxisChartPainter<D extends AxisChartData>
-    extends BaseChartPainter<D> {
+abstract class AxisChartPainter{
   AxisChartPainter() {
   }
 
@@ -23,16 +22,15 @@ abstract class AxisChartPainter<D extends AxisChartData>
   void paint(
     BuildContext context,
     CanvasWrapper canvasWrapper,
-    PaintHolder<D> holder,
+    PaintHolder<LineChartData> holder,
   ) {
-    super.paint(context, canvasWrapper, holder);
   }
 
 
   /// With this function we can convert our [FlSpot] x
   /// to the view base axis x .
   /// the view 0, 0 is on the top/left, but the spots is bottom/left
-  double getPixelX(double spotX, Size viewSize, PaintHolder<D> holder) {
+  double getPixelX(double spotX, Size viewSize, PaintHolder<LineChartData> holder) {
     final data = holder.data;
     final deltaX = data.maxX - data.minX;
     if (deltaX == 0.0) {
@@ -43,7 +41,7 @@ abstract class AxisChartPainter<D extends AxisChartData>
 
   /// With this function we can convert our [FlSpot] y
   /// to the view base axis y.
-  double getPixelY(double spotY, Size viewSize, PaintHolder<D> holder) {
+  double getPixelY(double spotY, Size viewSize, PaintHolder<LineChartData> holder) {
     final data = holder.data;
     final deltaY = data.maxY - data.minY;
     if (deltaY == 0.0) {
