@@ -2,14 +2,13 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_extensions.dart';
-import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_painter.dart';
 import 'package:fl_chart/src/chart/base/base_chart/base_chart_painter.dart';
 import 'package:fl_chart/src/extensions/paint_extension.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/material.dart';
 
 /// Paints [LineChartData] in the canvas, it can be used in a [CustomPainter]
-class LineChartPainter extends AxisChartPainter {
+class LineChartPainter {
   /// Paints [dataList] into canvas, it is the animating [LineChartData],
   /// [targetData] is the animation's target and remains the same
   /// during animation, then we should use it  when we need to show
@@ -43,8 +42,6 @@ class LineChartPainter extends AxisChartPainter {
     if (data.lineBarsData.isEmpty) {
       return;
     }
-    super.paint(context, canvasWrapper, holder);
-
     /// draw each line independently on the chart
     for (var i = 0; i < data.lineBarsData.length; i++) {
       final barData = data.lineBarsData[i];
@@ -352,5 +349,25 @@ class LineChartPainter extends AxisChartPainter {
       ..transparentIfWidthIsZero();
 
     canvasWrapper.drawPath(barPath, _barPaint);
+  }
+
+  double getPixelX(double spotX, Size viewSize, PaintHolder<LineChartData> holder) {
+    final data = holder.data;
+    final deltaX = data.maxX - data.minX;
+    if (deltaX == 0.0) {
+      return 0;
+    }
+    return ((spotX - data.minX) / deltaX) * viewSize.width;
+  }
+
+  /// With this function we can convert our [FlSpot] y
+  /// to the view base axis y.
+  double getPixelY(double spotY, Size viewSize, PaintHolder<LineChartData> holder) {
+    final data = holder.data;
+    final deltaY = data.maxY - data.minY;
+    if (deltaY == 0.0) {
+      return viewSize.height;
+    }
+    return viewSize.height - (((spotY - data.minY) / deltaY) * viewSize.height);
   }
 }
