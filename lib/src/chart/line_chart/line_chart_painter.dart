@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/extensions/paint_extension.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/material.dart';
 
