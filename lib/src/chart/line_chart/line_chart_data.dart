@@ -10,7 +10,6 @@ class LineChartData extends AxisChartData  {
 
   LineChartData({
     this.lineBarsData = const [],
-    super.borderData,
     double? minX,
     double? maxX,
     double? minY,

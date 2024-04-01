@@ -85,10 +85,6 @@ class _LineChartSample0State extends State<LineChartSample0> {
 
   LineChartData mainData() {
     return LineChartData(
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
       minX: 0,
       maxX: spots.length.toDouble()-1,
       minY: array.reduce((value, element) => value < element ? value : element),

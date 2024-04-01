@@ -11,16 +11,15 @@ import 'package:flutter/material.dart' hide Image;
 /// we use them to determine how much is the scale of chart,
 /// and calculate x and y according to the scale.
 /// each child have to set it in their constructor.
-abstract class AxisChartData extends BaseChartData with EquatableMixin {
+abstract class AxisChartData {
+
   AxisChartData({
     required this.minX,
     required this.maxX,
     required this.minY,
     required this.maxY,
     Color? backgroundColor,
-    super.borderData,
-  })  :
-        backgroundColor = backgroundColor ?? Colors.transparent;
+  })  : backgroundColor = backgroundColor ?? Colors.transparent;
 
   double minX;
   double maxX;
@@ -35,33 +34,19 @@ abstract class AxisChartData extends BaseChartData with EquatableMixin {
 
   /// Difference of [maxX] and [minX]
   double get horizontalDiff => maxX - minX;
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        minX,
-        maxX,
-        minY,
-        maxY,
-        backgroundColor,
-        borderData,
-      ];
 }
 
-/// Represents a side of the chart
-enum AxisSide { left, top, right, bottom }
-
 /// Represents a conceptual position in cartesian (axis based) space.
-class FlSpot with EquatableMixin {
+class FlSpot {
   /// [x] determines cartesian (axis based) horizontally position
   /// 0 means most left point of the chart
   ///
   /// [y] determines cartesian (axis based) vertically position
   /// 0 means most bottom point of the chart
   const FlSpot(this.x, this.y);
+
   final double x;
   final double y;
-
 
   ///Prints x and y coordinates of FlSpot list
   @override
@@ -78,14 +63,4 @@ class FlSpot with EquatableMixin {
 
   /// Determines if [x] and [y] is not null.
   bool isNotNull() => !isNull();
-
-  /// Used for equality check, see [EquatableMixin].
-  @override
-  List<Object?> get props => [
-        x,
-        y,
-      ];
 }
-
-
-

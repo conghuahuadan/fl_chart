@@ -35,7 +35,7 @@ class _LineChartState extends State<LineChart> {
     AxisChartData data = showingData;
     return  Container(
       decoration: BoxDecoration(
-        border: data.borderData.isVisible() ? data.borderData.border : null,
+        border: Border.all(color: const Color(0xff37434d)),
       ),
       child: LineChartLeaf(
         data: showingData,
