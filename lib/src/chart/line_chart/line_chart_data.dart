@@ -5,8 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide Image;
 
-
-class LineChartData extends AxisChartData  {
+class LineChartData {
+  double minX;
+  double maxX;
+  double minY;
+  double maxY;
 
   LineChartData({
     this.lineBarsData = const [],
@@ -14,22 +17,27 @@ class LineChartData extends AxisChartData  {
     double? maxX,
     double? minY,
     double? maxY,
-    super.backgroundColor,
-  }) : super(
-          minX: minX ?? double.nan,
-          maxX: maxX ?? double.nan,
-          minY: minY ?? double.nan,
-          maxY: maxY ?? double.nan,
-        );
+    Color? backgroundColor,
+  })  : backgroundColor = backgroundColor ?? Colors.transparent,
+        minX = minX ?? double.nan,
+        maxX = maxX ?? double.nan,
+        minY = minY ?? double.nan,
+        maxY = maxY ?? double.nan;
 
   /// [LineChart] draws some lines in various shapes and overlaps them.
   final List<LineChartBarData> lineBarsData;
 
+  /// A background color which is drawn behind the chart.
+  Color backgroundColor;
 
+  /// Difference of [maxY] and [minY]
+  double get verticalDiff => maxY - minY;
+
+  /// Difference of [maxX] and [minX]
+  double get horizontalDiff => maxX - minX;
 }
 
 class LineChartBarData {
-
   LineChartBarData({
     this.spots = const [],
     this.show = true,
@@ -121,7 +129,6 @@ class LineChartBarData {
   /// otherwise it draws line with hard edges.
   final bool isCurved;
 
-
   /// Determines the style of line's cap.
   final bool isStrokeCapRound;
 
@@ -130,12 +137,7 @@ class LineChartBarData {
 
   /// Fills the space blow the line, using a color or gradient.
   final BarAreaData belowBarData;
-
-
-
 }
-
-
 
 /// Holds data for filling an area (above or below) of the line with a color or gradient.
 class BarAreaData {
@@ -181,11 +183,4 @@ class BarAreaData {
 
   /// determines should or shouldn't apply cutOffY
   final bool applyCutOffY;
-
-
 }
-
-
-
-
-

@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/chart/base/axis_chart/axis_chart_extensions.dart';
-import 'package:fl_chart/src/chart/base/base_chart/base_chart_painter.dart';
 import 'package:fl_chart/src/extensions/paint_extension.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -36,9 +34,8 @@ class LineChartPainter {
   void paint(
     BuildContext context,
     CanvasWrapper canvasWrapper,
-    PaintHolder<LineChartData> holder,
+      LineChartData data,
   ) {
-    final data = holder.data;
     if (data.lineBarsData.isEmpty) {
       return;
     }
@@ -50,35 +47,54 @@ class LineChartPainter {
         continue;
       }
 
-      drawBarLine(canvasWrapper, barData, holder);
+      drawBarLine(canvasWrapper, barData, data);
     }
+  }
+
+  List<List<FlSpot>> splitByNullSpots(List<FlSpot> spots) {
+    final barList = <List<FlSpot>>[[]];
+
+    // handle nullability by splitting off the list into multiple
+    // separate lists when separated by nulls
+    for (final spot in spots) {
+      if (spot.isNotNull()) {
+        barList.last.add(spot);
+      } else if (barList.last.isNotEmpty) {
+        barList.add([]);
+      }
+    }
+    // remove last item if one or more last spots were null
+    if (barList.last.isEmpty) {
+      barList.removeLast();
+    }
+    return barList;
   }
 
   @visibleForTesting
   void drawBarLine(
     CanvasWrapper canvasWrapper,
     LineChartBarData barData,
-    PaintHolder<LineChartData> holder,
+      LineChartData data,
   ) {
     final viewSize = canvasWrapper.size;
-    final barList = barData.spots.splitByNullSpots();
+    final barList = splitByNullSpots(barData.spots);
 
     // paint each sublist that was built above
     // bar is passed in separately from barData
     // because barData is the whole line
     // and bar is a piece of that line
     for (final bar in barList) {
-      final barPath = generateBarPath(viewSize, barData, bar, holder);
+      final barPath = generateBarPath(viewSize, barData, bar, data);
 
       final belowBarPath =
-          generateBelowBarPath(viewSize, barData, barPath, bar, holder);
+          generateBelowBarPath(viewSize, barData, barPath, bar, data);
 
       final completelyFillAboveBarPath = generateAboveBarPath(
         viewSize,
         barData,
         barPath,
         bar,
-        holder,
+        data,
         fillCompletely: true,
       );
 
@@ -86,10 +102,10 @@ class LineChartPainter {
         canvasWrapper,
         belowBarPath,
         completelyFillAboveBarPath,
-        holder,
+        data,
         barData,
       );
-      drawBar(canvasWrapper, barPath, barData, holder);
+      drawBar(canvasWrapper, barPath, barData, data);
     }
   }
 
@@ -99,14 +115,14 @@ class LineChartPainter {
     Size viewSize,
     LineChartBarData barData,
     List<FlSpot> barSpots,
-    PaintHolder<LineChartData> holder, {
+      LineChartData data, {
     Path? appendToPath,
   }) {
     return generateNormalBarPath(
       viewSize,
       barData,
       barSpots,
-      holder,
+      data,
       appendToPath: appendToPath,
     );
   }
@@ -124,7 +140,7 @@ class LineChartPainter {
     Size viewSize,
     LineChartBarData barData,
     List<FlSpot> barSpots,
-    PaintHolder<LineChartData> holder, {
+      LineChartData data, {
     Path? appendToPath,
   }) {
     final path = appendToPath ?? Path();
@@ -132,8 +148,8 @@ class LineChartPainter {
 
     var temp = Offset.zero;
 
-    final x = getPixelX(barSpots[0].x, viewSize, holder);
-    final y = getPixelY(barSpots[0].y, viewSize, holder);
+    final x = getPixelX(barSpots[0].x, viewSize, data);
+    final y = getPixelY(barSpots[0].y, viewSize, data);
     if (appendToPath == null) {
       path.moveTo(x, y);
       if (size == 1) {
@@ -145,20 +161,20 @@ class LineChartPainter {
     for (var i = 1; i < size; i++) {
       /// CurrentSpot
       final current = Offset(
-        getPixelX(barSpots[i].x, viewSize, holder),
-        getPixelY(barSpots[i].y, viewSize, holder),
+        getPixelX(barSpots[i].x, viewSize, data),
+        getPixelY(barSpots[i].y, viewSize, data),
       );
 
       /// previous spot
       final previous = Offset(
-        getPixelX(barSpots[i - 1].x, viewSize, holder),
-        getPixelY(barSpots[i - 1].y, viewSize, holder),
+        getPixelX(barSpots[i - 1].x, viewSize, data),
+        getPixelY(barSpots[i - 1].y, viewSize, data),
       );
 
       /// next point
       final next = Offset(
-        getPixelX(barSpots[i + 1 < size ? i + 1 : i].x, viewSize, holder),
-        getPixelY(barSpots[i + 1 < size ? i + 1 : i].y, viewSize, holder),
+        getPixelX(barSpots[i + 1 < size ? i + 1 : i].x, viewSize, data),
+        getPixelY(barSpots[i + 1 < size ? i + 1 : i].y, viewSize, data),
       );
 
       final controlPoint1 = previous + temp;
@@ -194,33 +210,33 @@ class LineChartPainter {
     LineChartBarData barData,
     Path barPath,
     List<FlSpot> barSpots,
-    PaintHolder<LineChartData> holder, {
+      LineChartData data, {
     bool fillCompletely = false,
   }) {
     final belowBarPath = Path.from(barPath);
 
     /// Line To Bottom Right
-    var x = getPixelX(barSpots[barSpots.length - 1].x, viewSize, holder);
+    var x = getPixelX(barSpots[barSpots.length - 1].x, viewSize, data);
     double y;
     if (!fillCompletely && barData.belowBarData.applyCutOffY) {
-      y = getPixelY(barData.belowBarData.cutOffY, viewSize, holder);
+      y = getPixelY(barData.belowBarData.cutOffY, viewSize, data);
     } else {
       y = viewSize.height;
     }
     belowBarPath.lineTo(x, y);
 
     /// Line To Bottom Left
-    x = getPixelX(barSpots[0].x, viewSize, holder);
+    x = getPixelX(barSpots[0].x, viewSize, data);
     if (!fillCompletely && barData.belowBarData.applyCutOffY) {
-      y = getPixelY(barData.belowBarData.cutOffY, viewSize, holder);
+      y = getPixelY(barData.belowBarData.cutOffY, viewSize, data);
     } else {
       y = viewSize.height;
     }
     belowBarPath.lineTo(x, y);
 
     /// Line To Top Left
-    x = getPixelX(barSpots[0].x, viewSize, holder);
-    y = getPixelY(barSpots[0].y, viewSize, holder);
+    x = getPixelX(barSpots[0].x, viewSize, data);
+    y = getPixelY(barSpots[0].y, viewSize, data);
     belowBarPath
       ..lineTo(x, y)
       ..close();
@@ -238,27 +254,27 @@ class LineChartPainter {
     LineChartBarData barData,
     Path barPath,
     List<FlSpot> barSpots,
-    PaintHolder<LineChartData> holder, {
+      LineChartData data, {
     bool fillCompletely = false,
   }) {
     final aboveBarPath = Path.from(barPath);
 
     /// Line To Top Right
-    var x = getPixelX(barSpots[barSpots.length - 1].x, viewSize, holder);
+    var x = getPixelX(barSpots[barSpots.length - 1].x, viewSize, data);
     double y;
     y = 0.0;
 
     aboveBarPath.lineTo(x, y);
 
     /// Line To Top Left
-    x = getPixelX(barSpots[0].x, viewSize, holder);
+    x = getPixelX(barSpots[0].x, viewSize, data);
     y = 0.0;
 
     aboveBarPath.lineTo(x, y);
 
     /// Line To Bottom Left
-    x = getPixelX(barSpots[0].x, viewSize, holder);
-    y = getPixelY(barSpots[0].y, viewSize, holder);
+    x = getPixelX(barSpots[0].x, viewSize, data);
+    y = getPixelY(barSpots[0].y, viewSize, data);
     aboveBarPath
       ..lineTo(x, y)
       ..close();
@@ -274,7 +290,7 @@ class LineChartPainter {
     CanvasWrapper canvasWrapper,
     Path belowBarPath,
     Path filledAboveBarPath,
-    PaintHolder<LineChartData> holder,
+      LineChartData data,
     LineChartBarData barData,
   ) {
     if (!barData.belowBarData.show) {
@@ -284,9 +300,9 @@ class LineChartPainter {
     final viewSize = canvasWrapper.size;
 
     final belowBarLargestRect = Rect.fromLTRB(
-      getPixelX(barData.mostLeftSpot.x, viewSize, holder),
-      getPixelY(barData.mostTopSpot.y, viewSize, holder),
-      getPixelX(barData.mostRightSpot.x, viewSize, holder),
+      getPixelX(barData.mostLeftSpot.x, viewSize, data),
+      getPixelY(barData.mostTopSpot.y, viewSize, data),
+      getPixelX(barData.mostRightSpot.x, viewSize, data),
       viewSize.height,
     );
 
@@ -320,7 +336,7 @@ class LineChartPainter {
     CanvasWrapper canvasWrapper,
     Path barPath,
     LineChartBarData barData,
-    PaintHolder<LineChartData> holder,
+      LineChartData data,
   ) {
     if (!barData.show) {
       return;
@@ -333,10 +349,10 @@ class LineChartPainter {
           StrokeJoin.round;
 
     final rectAroundTheLine = Rect.fromLTRB(
-      getPixelX(barData.mostLeftSpot.x, viewSize, holder),
-      getPixelY(barData.mostTopSpot.y, viewSize, holder),
-      getPixelX(barData.mostRightSpot.x, viewSize, holder),
-      getPixelY(barData.mostBottomSpot.y, viewSize, holder),
+      getPixelX(barData.mostLeftSpot.x, viewSize, data),
+      getPixelY(barData.mostTopSpot.y, viewSize, data),
+      getPixelX(barData.mostRightSpot.x, viewSize, data),
+      getPixelY(barData.mostBottomSpot.y, viewSize, data),
     );
     _barPaint
       ..setColorOrGradient(
@@ -351,8 +367,7 @@ class LineChartPainter {
     canvasWrapper.drawPath(barPath, _barPaint);
   }
 
-  double getPixelX(double spotX, Size viewSize, PaintHolder<LineChartData> holder) {
-    final data = holder.data;
+  double getPixelX(double spotX, Size viewSize, LineChartData data) {
     final deltaX = data.maxX - data.minX;
     if (deltaX == 0.0) {
       return 0;
@@ -362,12 +377,31 @@ class LineChartPainter {
 
   /// With this function we can convert our [FlSpot] y
   /// to the view base axis y.
-  double getPixelY(double spotY, Size viewSize, PaintHolder<LineChartData> holder) {
-    final data = holder.data;
+  double getPixelY(double spotY, Size viewSize,LineChartData data) {
     final deltaY = data.maxY - data.minY;
     if (deltaY == 0.0) {
       return viewSize.height;
     }
     return viewSize.height - (((spotY - data.minY) / deltaY) * viewSize.height);
+  }
+}
+
+extension PaintExtension on Paint {
+  /// Hides the paint's color, if strokeWidth is zero
+  void transparentIfWidthIsZero() {
+    if (strokeWidth == 0) {
+      shader = null;
+      color = color.withOpacity(0);
+    }
+  }
+
+  void setColorOrGradient(Color? color, Gradient? gradient, Rect rect) {
+    if (gradient != null) {
+      this.color = Colors.black;
+      shader = gradient.createShader(rect);
+    } else {
+      this.color = color ?? Colors.transparent;
+      shader = null;
+    }
   }
 }

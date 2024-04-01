@@ -1,5 +1,4 @@
 import 'package:fl_chart/fl_chart.dart';
-import 'package:fl_chart/src/chart/base/base_chart/base_chart_painter.dart';
 import 'package:fl_chart/src/chart/line_chart/line_chart_painter.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,7 +56,6 @@ class RenderLineChart extends RenderBox {
   @visibleForTesting
   LineChartPainter painter = LineChartPainter();
 
-  PaintHolder<LineChartData> get paintHolder => PaintHolder(data);
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -67,7 +65,7 @@ class RenderLineChart extends RenderBox {
     painter.paint(
       _buildContext,
       CanvasWrapper(canvas, mockTestSize ?? size),
-      paintHolder,
+      data,
     );
     canvas.restore();
   }

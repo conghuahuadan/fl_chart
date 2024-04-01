@@ -32,7 +32,7 @@ class _LineChartState extends State<LineChart> {
   @override
   Widget build(BuildContext context) {
     final showingData = _getData();
-    AxisChartData data = showingData;
+    LineChartData data = showingData;
     return  Container(
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xff37434d)),
