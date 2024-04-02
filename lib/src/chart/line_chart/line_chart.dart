@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LineChart extends StatefulWidget {
-
   const LineChart(
     this.data, {
     this.chartRendererKey,
@@ -24,10 +23,9 @@ class _LineChartState extends State<LineChart> {
   @override
   Widget build(BuildContext context) {
     final showingData = _getData();
-    LineChartData data = showingData;
-    return  Container(
+    return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xff37434d)),
+        border: Border.all(color: const Color(0xffeeeeee)),
       ),
       child: LineChartLeaf(
         data: showingData,

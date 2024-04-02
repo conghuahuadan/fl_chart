@@ -20,4 +20,6 @@ class CanvasWrapper {
 
   void saveLayer(Rect bounds, Paint paint) => canvas.saveLayer(bounds, paint);
 
+  void drawLine(Offset p1, Offset p2, Paint paint) =>
+      canvas.drawLine(p1, p2, paint);
 }

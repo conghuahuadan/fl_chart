@@ -12,7 +12,7 @@ class _DemoPageState extends State<DemoPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xff272d42),
+      color: Color(0xffffffff),
       child: const Center(
         child: LineChartSample0(),
       ),

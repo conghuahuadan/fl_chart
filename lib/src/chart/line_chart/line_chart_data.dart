@@ -6,7 +6,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide Image;
 
 class LineChartData {
-
   LineChartData({
     this.lineBarsData = const [],
     double? minX,
@@ -18,7 +17,9 @@ class LineChartData {
         minX = minX ?? double.nan,
         maxX = maxX ?? double.nan,
         minY = minY ?? double.nan,
-        maxY = maxY ?? double.nan;
+        maxY = maxY ?? double.nan
+  ;
+
   double minX;
   double maxX;
   double minY;
@@ -28,9 +29,7 @@ class LineChartData {
 
   Color backgroundColor;
 
-
   double get verticalDiff => maxY - minY;
-
 
   double get horizontalDiff => maxX - minX;
 }
@@ -38,17 +37,11 @@ class LineChartData {
 class LineChartBarData {
   LineChartBarData({
     this.spots = const [],
-    this.show = true,
     Color? color,
-    this.gradient,
     this.barWidth = 2.0,
     this.isCurved = false,
     this.isStrokeCapRound = false,
-    this.isStrokeJoinRound = false,
-    BarAreaData? belowBarData,
-  })  : color =
-            color ?? ((color == null && gradient == null) ? Colors.cyan : null),
-        belowBarData = belowBarData ?? BarAreaData() {
+  })  : color = color ?? Colors.cyan {
     FlSpot? mostLeft;
     FlSpot? mostTop;
     FlSpot? mostRight;
@@ -99,44 +92,12 @@ class LineChartBarData {
 
   late final FlSpot mostBottomSpot;
 
-  final bool show;
-
-  final Color? color;
-
-  final Gradient? gradient;
+  final Color color;
 
   final double barWidth;
 
   final bool isCurved;
 
   final bool isStrokeCapRound;
-
-  final bool isStrokeJoinRound;
-
-  final BarAreaData belowBarData;
 }
 
-
-class BarAreaData {
-
-  BarAreaData({
-    this.show = false,
-    Color? color,
-    this.gradient,
-    this.cutOffY = 0,
-    this.applyCutOffY = false,
-  }) : color = color ??
-            ((color == null && gradient == null)
-                ? Colors.blueGrey.withOpacity(0.5)
-                : null);
-
-  final bool show;
-
-  final Color? color;
-
-  final Gradient? gradient;
-
-  final double cutOffY;
-
-  final bool applyCutOffY;
-}
