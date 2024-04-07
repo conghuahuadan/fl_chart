@@ -16,7 +16,7 @@ class _LineChartSample0State extends State<LineChartSample0> {
 
   bool showAvg = false;
 
-  List<FlSpot> spots = [];
+  List<SpotMo> spots = [];
   List<double> array = [
     5942.0,
     5944.0,
@@ -57,7 +57,7 @@ class _LineChartSample0State extends State<LineChartSample0> {
     spots.clear();
     for (int i = 0; i < array.length; i++) {
       double e = array[i];
-      spots.add(FlSpot(i.toDouble(), e));
+      spots.add(SpotMo(i.toDouble(), e));
     }
   }
 

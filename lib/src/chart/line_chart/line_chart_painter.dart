@@ -1,11 +1,8 @@
-import 'dart:math';
-import 'dart:ui';
-
-import 'package:fl_chart/fl_chart.dart';
 import 'package:fl_chart/src/utils/canvas_wrapper.dart';
+import 'package:fl_chart/src/utils/dash_painter.dart';
 import 'package:flutter/material.dart';
 
-import 'package:fl_chart/src/utils/dash_painter.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class LineChartPainter {
   LineChartPainter() : super() {
@@ -30,11 +27,11 @@ class LineChartPainter {
   double minY = 0;
   double maxY = 0;
 
-  List<FlSpot> spots = [];
+  List<SpotMo> spots = [];
 
   Color color = Colors.transparent;
 
-  void paint(BuildContext context, CanvasWrapper canvasWrapper, List<FlSpot> spots, Color color) {
+  void paint(BuildContext context, CanvasWrapper canvasWrapper, List<SpotMo> spots, Color color) {
     this.spots = spots;
     this.color = color;
 
@@ -87,7 +84,7 @@ class LineChartPainter {
   @visibleForTesting
   Path generateBarPath(
     Size viewSize,
-    List<FlSpot> barSpots,
+    List<SpotMo> barSpots,
   ) {
     return generateNormalBarPath(
       viewSize,
@@ -98,7 +95,7 @@ class LineChartPainter {
   @visibleForTesting
   Path generateNormalBarPath(
     Size viewSize,
-    List<FlSpot> barSpots,
+    List<SpotMo> barSpots,
   ) {
     final path = Path();
     final size = barSpots.length;
@@ -151,7 +148,7 @@ class LineChartPainter {
   Path generateBelowBarPath(
     Size viewSize,
     Path barPath,
-    List<FlSpot> barSpots,
+    List<SpotMo> barSpots,
   ) {
     final belowBarPath = Path.from(barPath);
 
@@ -175,7 +172,7 @@ class LineChartPainter {
 
   @visibleForTesting
   Path generateAboveBarPath(
-      Size viewSize, Path barPath, List<FlSpot> barSpots) {
+      Size viewSize, Path barPath, List<SpotMo> barSpots) {
     final aboveBarPath = Path.from(barPath);
 
     var x = getPixelX(barSpots[barSpots.length - 1].x, viewSize);

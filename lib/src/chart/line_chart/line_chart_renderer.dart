@@ -11,27 +11,25 @@ class LineChartLeaf extends LeafRenderObjectWidget {
     required this.color,
   });
 
-  final List<FlSpot> spots;
+  final List<SpotMo> spots;
   final Color color;
 
   @override
   RenderLineChart createRenderObject(BuildContext context) =>
       RenderLineChart(context,  spots, color);
 
-  @override
-  void updateRenderObject(BuildContext context, RenderLineChart renderObject) {}
 }
 
 class RenderLineChart extends RenderBox {
   RenderLineChart(
-      BuildContext context, List<FlSpot> spots, Color color)
+      BuildContext context, List<SpotMo> spots, Color color)
       : _buildContext = context,
         _spots = spots,
         _color = color;
 
   BuildContext _buildContext;
 
-  List<FlSpot> _spots;
+  List<SpotMo> _spots;
   Color _color;
 
   @visibleForTesting
