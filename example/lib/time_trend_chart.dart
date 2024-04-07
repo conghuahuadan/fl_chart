@@ -1,8 +1,94 @@
-import 'package:fl_chart/src/utils/canvas_wrapper.dart';
-import 'package:fl_chart/src/utils/dash_painter.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
-import 'package:fl_chart/fl_chart.dart';
+class TimeTrendChart extends StatefulWidget {
+  const TimeTrendChart(
+    this.spots,
+    this.color, {
+    this.chartRendererKey,
+    super.key,
+  });
+
+  final Key? chartRendererKey;
+
+  final List<SpotMo> spots;
+
+  final Color color;
+
+  @override
+  _TimeTrendChartState createState() => _TimeTrendChartState();
+}
+
+class _TimeTrendChartState extends State<TimeTrendChart> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xffeeeeee)),
+      ),
+      child: LineChartLeaf(
+        spots: widget.spots,
+        color: widget.color,
+      ),
+    );
+  }
+
+  @override
+  void forEachTween(TweenVisitor<dynamic> visitor) {}
+}
+
+class LineChartLeaf extends LeafRenderObjectWidget {
+  const LineChartLeaf({
+    super.key,
+    required this.spots,
+    required this.color,
+  });
+
+  final List<SpotMo> spots;
+  final Color color;
+
+  @override
+  RenderLineChart createRenderObject(BuildContext context) =>
+      RenderLineChart(context, spots, color);
+}
+
+class RenderLineChart extends RenderBox {
+  RenderLineChart(BuildContext context, List<SpotMo> spots, Color color)
+      : _buildContext = context,
+        _spots = spots,
+        _color = color;
+
+  BuildContext _buildContext;
+
+  List<SpotMo> _spots;
+  Color _color;
+
+  @visibleForTesting
+  LineChartPainter painter = LineChartPainter();
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final canvas = context.canvas
+      ..save()
+      ..translate(offset.dx, offset.dy);
+    painter.paint(_buildContext, canvas, size, _spots, _color);
+    canvas.restore();
+  }
+
+  @override
+  void performLayout() {
+    size = computeDryLayout(constraints);
+  }
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return Size(constraints.maxWidth, constraints.maxHeight);
+  }
+
+  @override
+  bool hitTestSelf(Offset position) => true;
+}
 
 class LineChartPainter {
   LineChartPainter() : super() {
@@ -31,9 +117,13 @@ class LineChartPainter {
 
   Color color = Colors.transparent;
 
-  void paint(BuildContext context, CanvasWrapper canvasWrapper, List<SpotMo> spots, Color color) {
+  Size size = const Size(0, 0);
+
+  void paint(BuildContext context, Canvas canvas, Size size, List<SpotMo> spots,
+      Color color) {
     this.spots = spots;
     this.color = color;
+    this.size = size;
 
     minX = 0;
     maxX = spots.length.toDouble() - 1;
@@ -50,24 +140,26 @@ class LineChartPainter {
       }
     }
 
-    drawBarLine(canvasWrapper);
+    drawBarLine(canvas, size);
   }
 
   @visibleForTesting
   void drawBarLine(
-    CanvasWrapper canvasWrapper,
+    Canvas canvas,
+    Size size,
   ) {
-    final viewSize = canvasWrapper.size;
+    final viewSize = size;
 
     final barPath = generateBarPath(viewSize, spots);
 
     final belowBarPath = generateBelowBarPath(viewSize, barPath, spots);
 
     drawBelowBar(
-      canvasWrapper,
+      canvas,
+      size,
       belowBarPath,
     );
-    drawBar(canvasWrapper, barPath);
+    drawBar(canvas, size, barPath);
 
     final double y = getPixelY(spots[spots.length - 1].y, viewSize);
 
@@ -78,7 +170,7 @@ class LineChartPainter {
     _linePaint
       ..strokeWidth = 0.3
       ..color = Color(0x80000000);
-    dashPainter.paint(canvasWrapper.canvas, linePath, _linePaint);
+    dashPainter.paint(canvas, linePath, _linePaint);
   }
 
   @visibleForTesting
@@ -197,10 +289,11 @@ class LineChartPainter {
 
   @visibleForTesting
   void drawBelowBar(
-    CanvasWrapper canvasWrapper,
+    Canvas canvas,
+    Size size,
     Path belowBarPath,
   ) {
-    final viewSize = canvasWrapper.size;
+    final viewSize = size;
 
     final belowBarLargestRect = Rect.fromLTRB(
       0,
@@ -222,12 +315,13 @@ class LineChartPainter {
       belowBarLargestRect,
     );
 
-    canvasWrapper.drawPath(belowBarPath, _barAreaPaint);
+    canvas.drawPath(belowBarPath, _barAreaPaint);
   }
 
   @visibleForTesting
   void drawBar(
-    CanvasWrapper canvasWrapper,
+    Canvas canvas,
+    Size size,
     Path barPath,
   ) {
     _barPaint
@@ -238,7 +332,7 @@ class LineChartPainter {
       ..strokeWidth = 1
       ..transparentIfWidthIsZero();
 
-    canvasWrapper.drawPath(barPath, _barPaint);
+    canvas.drawPath(barPath, _barPaint);
   }
 
   double getPixelX(double spotX, Size viewSize) {
@@ -273,6 +367,52 @@ extension PaintExtension on Paint {
     } else {
       this.color = color ?? Colors.transparent;
       shader = null;
+    }
+  }
+}
+
+class SpotMo {
+  const SpotMo(this.x, this.y);
+
+  final double x;
+  final double y;
+
+  @override
+  String toString() => '($x, $y)';
+
+  static const SpotMo nullSpot = SpotMo(double.nan, double.nan);
+
+  static const SpotMo zero = SpotMo(0, 0);
+
+  bool isNull() => this == nullSpot;
+
+  bool isNotNull() => !isNull();
+}
+
+class DashPainter {
+  const DashPainter({
+    this.step = 2,
+    this.span = 2,
+  });
+
+  final double step;
+  final double span;
+
+  double get partLength => step + span;
+
+  void paint(Canvas canvas, Path path, Paint paint) {
+    PathMetrics pms = path.computeMetrics();
+    for (final pm in pms) {
+      final count = pm.length ~/ partLength;
+      for (var i = 0; i < count; i++) {
+        canvas.drawPath(
+          pm.extractPath(partLength * i, partLength * i + step),
+          paint,
+        );
+      }
+      final tail = pm.length % partLength;
+      canvas.drawPath(pm.extractPath(pm.length - tail, pm.length), paint);
+      // print("pms: ${pms.length}, ${pm.length}");
     }
   }
 }
