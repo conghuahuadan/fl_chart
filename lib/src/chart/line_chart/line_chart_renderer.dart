@@ -7,58 +7,42 @@ import 'package:flutter/material.dart';
 class LineChartLeaf extends LeafRenderObjectWidget {
   const LineChartLeaf({
     super.key,
-    required this.data,
+    required this.spots,
+    required this.color,
   });
 
-  final LineChartData data;
+  final List<FlSpot> spots;
+  final Color color;
 
   @override
-  RenderLineChart createRenderObject(BuildContext context) => RenderLineChart(
-        context,
-        data,
-      );
+  RenderLineChart createRenderObject(BuildContext context) =>
+      RenderLineChart(context,  spots, color);
 
   @override
-  void updateRenderObject(BuildContext context, RenderLineChart renderObject) {
-    renderObject
-      ..data = data
-      .._buildContext = context;
-  }
+  void updateRenderObject(BuildContext context, RenderLineChart renderObject) {}
 }
 
-
 class RenderLineChart extends RenderBox {
-
   RenderLineChart(
-    BuildContext context,
-    LineChartData data,
-  )   : _buildContext = context,
-        _data = data;
+      BuildContext context, List<FlSpot> spots, Color color)
+      : _buildContext = context,
+        _spots = spots,
+        _color = color;
+
   BuildContext _buildContext;
 
-  LineChartData get data => _data;
-  LineChartData _data;
-
-  set data(LineChartData value) {
-    if (_data == value) return;
-    _data = value;
-    markNeedsPaint();
-  }
+  List<FlSpot> _spots;
+  Color _color;
 
   @visibleForTesting
   LineChartPainter painter = LineChartPainter();
-
 
   @override
   void paint(PaintingContext context, Offset offset) {
     final canvas = context.canvas
       ..save()
       ..translate(offset.dx, offset.dy);
-    painter.paint(
-      _buildContext,
-      CanvasWrapper(canvas, size),
-      data,
-    );
+    painter.paint(_buildContext, CanvasWrapper(canvas, size), _spots, _color);
     canvas.restore();
   }
 

@@ -74,28 +74,8 @@ class _LineChartSample0State extends State<LineChartSample0> {
               top: 24,
               bottom: 12,
             ),
-            child: LineChart(
-              mainData(),
-            ),
+            child: LineChart(spots, Colors.green),
           ),
-        ),
-      ],
-    );
-  }
-
-  LineChartData mainData() {
-    return LineChartData(
-      minX: 0,
-      maxX: spots.length.toDouble() - 1,
-      minY: array.reduce((value, element) => value < element ? value : element),
-      maxY: array.reduce((value, element) => value > element ? value : element),
-      lineBarsData: [
-        LineChartBarData(
-          spots: spots,
-          isCurved: false,
-          barWidth: 1,
-          color: const Color(0xffEB4539),
-          isStrokeCapRound: true,
         ),
       ],
     );

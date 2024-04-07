@@ -5,16 +5,18 @@ import 'package:flutter/material.dart';
 
 class LineChart extends StatefulWidget {
   const LineChart(
-    this.data, {
+    this.spots,
+    this.color, {
     this.chartRendererKey,
     super.key,
   });
 
-  final LineChartData data;
-
   final Key? chartRendererKey;
 
-  /// Creates a [_LineChartState]
+  final List<FlSpot> spots;
+
+  final Color color;
+
   @override
   _LineChartState createState() => _LineChartState();
 }
@@ -22,20 +24,15 @@ class LineChart extends StatefulWidget {
 class _LineChartState extends State<LineChart> {
   @override
   Widget build(BuildContext context) {
-    final showingData = _getData();
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xffeeeeee)),
       ),
       child: LineChartLeaf(
-        data: showingData,
+        spots: widget.spots,
+        color: widget.color,
       ),
     );
-  }
-
-  LineChartData _getData() {
-    var newData = widget.data;
-    return newData;
   }
 
   @override
