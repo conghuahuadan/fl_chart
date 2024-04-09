@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import 'time_trend_chart.dart';
+import 'kline_trend_chart.dart';
 
 class LineChartSample0 extends StatefulWidget {
   const LineChartSample0({super.key});
@@ -76,7 +76,7 @@ class _LineChartSample0State extends State<LineChartSample0> {
               top: 24,
               bottom: 12,
             ),
-            child: TimeTrendChart(spots, Colors.green),
+            child: KlineTrendChart(spots, Colors.green),
           ),
         ),
       ],

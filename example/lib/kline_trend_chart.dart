@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class TimeTrendChart extends StatefulWidget {
-  const TimeTrendChart(
+class KlineTrendChart extends StatefulWidget {
+  const KlineTrendChart(
     this.spots,
     this.color, {
     this.chartRendererKey,
@@ -17,10 +17,10 @@ class TimeTrendChart extends StatefulWidget {
   final Color color;
 
   @override
-  _TimeTrendChartState createState() => _TimeTrendChartState();
+  _KlineTrendChartState createState() => _KlineTrendChartState();
 }
 
-class _TimeTrendChartState extends State<TimeTrendChart> {
+class _KlineTrendChartState extends State<KlineTrendChart> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,9 +33,6 @@ class _TimeTrendChartState extends State<TimeTrendChart> {
       ),
     );
   }
-
-  @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {}
 }
 
 class LineChartLeaf extends LeafRenderObjectWidget {
